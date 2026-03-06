@@ -88,7 +88,7 @@ mineskin:
 > ⚠️ **Critical:** `host` must be `0.0.0.0`. Your public IP goes in `public-url` only!
 
 ### Step 3: Install the Setup Files
-1. Unzip **`setup.zip`** — this contains the `web/assets/overlays/` and `web/assets/skins/` folders
+1. Unzip **`setup.zip`** — this contains the `overlays/` and `skins/` folders
 2. Copy the extracted `web/` folder contents into `plugins/WardrobePanel/web/` (merge with existing)
 
 ### Step 4: Install the Assets
