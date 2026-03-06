@@ -1,212 +1,204 @@
-# WardrobePanel Plugin - Complete Wiki
-
 <p align="center">
-  <img src="https://img.shields.io/badge/Minecraft-1.21.4-brightgreen" alt="Minecraft Version">
-  <img src="https://img.shields.io/badge/Java-21+-orange" alt="Java Version">
-  <img src="https://img.shields.io/badge/Version-1.3.1-blue" alt="Plugin Version">
-  <img src="https://img.shields.io/badge/License-MIT-yellow" alt="License">
+  <img src="https://img.shields.io/badge/Version-1.3.1-blue?style=for-the-badge" alt="Version">
+  <img src="https://img.shields.io/badge/MC-1.21+-green?style=for-the-badge" alt="Minecraft">
+  <img src="https://img.shields.io/badge/Java-21+-orange?style=for-the-badge" alt="Java">
+  <img src="https://img.shields.io/badge/Paper-Supported-blueviolet?style=for-the-badge" alt="Paper">
 </p>
 
-A powerful Minecraft plugin that provides a web-based character creator, allowing players to customize their skins with clothing, accessories, hair styles, and more through an intuitive browser interface.
+# 🎨 WardrobePanel — Full Character Creator for Minecraft
+
+**WardrobePanel** is a premium Minecraft plugin that lets players customise their skin through a web-based character editor. Players mix and match base skins, hairstyles, eye colours, clothing, accessories, and more — all rendered live in a 3D viewer, then applied to their in-game skin automatically.
 
 ---
 
 ## 📋 Table of Contents
 
-1. [Overview](#-overview)
-2. [Features](#-features)
-3. [Requirements](#-requirements)
-4. [Installation](#-installation)
-5. [Configuration](#-configuration)
-6. [Commands](#-commands)
-7. [Permissions](#-permissions)
-8. [Permission-Based Item Filtering](#-permission-based-item-filtering)
-9. [Owned Items System](#-owned-items-system)
-10. [Character Profiles](#-character-profiles)
-11. [PlaceholderAPI Support](#-placeholderapi-support)
-12. [MineSkin API Integration](#-mineskin-api-integration)
-13. [Web Server Setup](#-web-server-setup)
-14. [Adding Custom Overlays](#-adding-custom-overlays)
-15. [Panorama Background](#-panorama-background)
-16. [File Structure](#-file-structure)
-17. [Troubleshooting](#-troubleshooting)
-18. [API Reference](#-api-reference)
-19. [Credits](#-credits)
-
----
-
-## 🎮 Overview
-
-WardrobePanel is a comprehensive character customization system for Minecraft servers. Players receive a unique, secure link to a web-based wardrobe editor where they can customize their character's appearance. The system supports multiple outfit layers including base skins, hair styles, eye colors, clothing, accessories, and more.
-
-### How It Works
-
-1. Player runs `/webchar` or `/webchar editor`
-2. Plugin generates a secure, time-limited session token
-3. Player receives a clickable link to the web panel
-4. Player customizes their character in the browser
-5. Player clicks "Save" or "Apply"
-6. Skin is generated, sent to MineSkin API for signing, and applied to the player
+- [Features](#-features)
+- [Requirements](#-requirements)
+- [Quick Setup](#-quick-setup)
+- [Configuration Guide](#-configuration-guide)
+- [Commands](#-commands)
+- [Permissions](#-permissions)
+- [PlaceholderAPI](#-placeholderapi)
+- [Website Layouts](#-website-layouts)
+- [Themes](#-themes)
+- [Customising Assets](#-customising-website-assets)
+- [Adding / Changing Overlays & Skins](#-adding--changing-overlays--skins)
+- [Profiles & Saved Outfits](#-profiles--saved-outfits)
+- [Owned Items System](#-owned-items-system)
+- [Permission-Based Filtering](#-permission-based-filtering)
+- [Troubleshooting](#-troubleshooting)
+- [Support](#-support)
 
 ---
 
 ## ✨ Features
 
-### Core Features
-- **Web-Based Character Creator**: Intuitive browser interface with 3D preview
-- **Real-Time Skin Customization**: Layer multiple overlays (clothing, hair, accessories)
-- **Color Customization**: Adjust colors for hair, eyes, skin tones, and clothing
-- **3D Skin Preview**: Powered by skinview3d for realistic rendering
-- **Built-in Web Server**: No external hosting required
-- **PlaceholderAPI Support**: Full integration for scoreboards, tab lists, and more
-
-### Player Features
-- **Save & Load Outfits**: Persistent outfit storage per player
-- **Multiple Character Profiles**: Create and manage multiple character looks
-- **Load Profiles In-Game**: Switch between profiles with a simple command
-- **Secure Sessions**: Time-limited, token-based authentication
-
-### Admin Features
-- **Permission System**: Fine-grained control over which items players can access
-- **Owned Items System**: Grant/revoke specific overlays to players
-- **Starter Items**: Define items available to all players by default
-- **Auto Overlay Scanning**: Automatically detect and catalog new overlay files
-
-### Customization Categories
-- **Base Skins**: Steve/Alex body types, male/female variants
-- **Hair Styles**: Various hairstyles with color customization
-- **Eyes**: Eye styles and colors
-- **Shirts**: Upper body clothing
-- **Jackets**: Outerwear layers
-- **Pants**: Lower body clothing
-- **Shoes**: Footwear options
-- **Accessories**: Additional decoration items
-- **Beards**: Facial hair for male characters
-- **Markings**: Face paint, scars, tattoos, etc.
-- **Skin Colours**: Skin tone palette options
+- 🌐 **Web-Based Character Editor** — players open a link in their browser, no mods needed
+- 🧍 **Live 3D Preview** — powered by skinview3d with idle animation & zoom
+- 👕 **Layered Overlay System** — hair, eyes, shirts, pants, jackets, shoes, accessories, beards, markings
+- 🎨 **Full Colour Customisation** — skin tone palettes, eye colour, hair colour, per-item clothing colours with darkness/saturation/contrast sliders
+- 👤 **Multiple Profiles** — each player can have up to N character profiles (configurable)
+- 💾 **Saved Outfits** — name and save multiple outfit presets per profile, load them from sidebar or via commands
+- 🔐 **Permission-Based Items** — control which items players can see/use per category or individually
+- 🛒 **Owned Items System** — give/revoke items per player for shop integration
+- 🏷️ **PlaceholderAPI** — 25+ placeholders for scoreboards, holograms, NPCs, etc.
+- 🎭 **12 Colour Themes** — dark charcoal, midnight, ocean, forest, sunset, cherry, nether, end, royal, steampunk, pastel, arctic
+- 📐 **6 Website Layouts** — classic, centered, compact, stacked, theater, minimal
+- 🔄 **Auto Skin Apply** — skins are applied automatically when saved, and on join
+- ⌨️ **Full Command Suite** — editor, load, loadfor, create, delete, rename, copy, setskin, resetskin, give, revoke, and more
+- 🖼️ **Customisable Assets** — swap background, cursor, icons, and fonts easily
 
 ---
 
 ## 📦 Requirements
 
-- **Java**: 21 or higher
-- **Server**: Paper 1.21.4+ (recommended) or Spigot compatible
-- **MineSkin API Key**: Required for skin application (free at [mineskin.org](https://mineskin.org/apikey))
-- **PlaceholderAPI** (Optional): For placeholder support in other plugins
+| Requirement | Version |
+|---|---|
+| Minecraft Server | **Paper/Purpur 1.21+** |
+| Java | **21+** |
+| MineSkin API Key | Free at [mineskin.org/apikey](https://mineskin.org/apikey) |
+| SkinsRestorer | **Recommended** (for skin application) |
+| PlaceholderAPI | **Optional** (for placeholders) |
 
 ---
 
-## 🔧 Installation
+## 🚀 Quick Setup
 
-### Step-by-Step Installation
+### Step 1: Install the Plugin
+1. Drop `WardrobePanel-V1.3.1.jar` into your server's `plugins/` folder
+2. Start your server once — the plugin will generate its config files and `web/` folder
+3. Stop the server
 
-1. Download the latest `wardrobepanel-x.x.x.jar`
-2. Place the JAR in your server's `plugins/` folder
-3. Start/restart your server
-4. The plugin will generate default configuration and asset files
-5. Configure `plugins/WardrobePanel/config.yml` (see [Configuration](#-configuration))
-6. Get a MineSkin API key from [mineskin.org/apikey](https://mineskin.org/apikey) and add it to the config
-7. Restart the server or run `/webchar reload`
-
-
-### Network/Port Configuration
-
-For players to access the web panel, ensure:
-
-1. **Port is Open**: Open port 50424 (or your configured port) on your firewall
-2. **Port Forwarding**: If behind NAT, set up port forwarding
-3. **Public URL**: Update `web.public-url` in config to your server's public IP/domain
-
----
-
-## ⚙️ Configuration
-
-The main configuration file is located at `plugins/WardrobePanel/config.yml`.
-
-### Web Server Settings
+### Step 2: Configure `config.yml`
+Open `plugins/WardrobePanel/config.yml` and set these critical values:
 
 ```yaml
 web:
-  # Enable the built-in web server
-  enabled: true
-  # Port for the web server (make sure this port is open)
-  port: 50424
-  # Host to bind to (0.0.0.0 = all interfaces)
-  host: "0.0.0.0"
-  # Public URL for the wardrobe panel (used in links sent to players)
-  public-url: "http://play.myserver.com:8080"
+  host: "0.0.0.0"           # ← ALWAYS leave this as 0.0.0.0
+  port: 50424                # ← Pick an open port
+  public-url: "http://YOUR_SERVER_IP:50424"  # ← Your real IP goes here!
+  theme: "default"           # ← Any of the 12 themes
+  layout: "classic"          # ← Any of the 6 layouts
+
+mineskin:
+  api-key: "YOUR_MINESKIN_API_KEY"  # ← Get from mineskin.org/apikey
 ```
 
-### Character Profiles
+> ⚠️ **Critical:** `host` must be `0.0.0.0`. Your public IP goes in `public-url` only!
+
+### Step 3: Install the Setup Files
+1. Unzip **`setup.zip`** — this contains the `web/assets/overlays/` and `web/assets/skins/` folders
+2. Copy the extracted `web/` folder contents into `plugins/WardrobePanel/web/` (merge with existing)
+
+### Step 4: Install the Assets
+1. Unzip **`assets.zip`** — this contains icons, backgrounds, cursors, fonts
+2. Copy the `assets/` folder into `plugins/WardrobePanel/web/` (merge with existing `assets/`)
+
+### Step 5: Choose Your Layout
+1. Unzip **`layouts.zip`** to see all 6 layout options
+2. Copy `index.html` and `style.css` from your chosen layout folder into `plugins/WardrobePanel/web/`
+3. Or simply set `web.layout: "theater"` (or any layout name) in `config.yml`
+
+### Step 6: Open the Port
+Make sure the port you chose (e.g. `50424`) is open in your hosting firewall.
+
+### Step 7: Start & Test
+1. Start the server
+2. Run `/webchar editor` in-game — you'll receive a clickable link
+3. Open the link in your browser — the character editor should load
+
+---
+
+## ⚙️ Configuration Guide
+
+### `config.yml` — Full Breakdown
+
+<details>
+<summary><b>Web Server Settings</b></summary>
+
+```yaml
+web:
+  enabled: true
+  port: 50424
+  host: "0.0.0.0"       # ALWAYS 0.0.0.0 — binds to all interfaces
+  public-url: "http://YOUR_IP:50424"
+  theme: "default"       # See Themes section
+  layout: "classic"      # See Layouts section
+```
+
+| Key | Description |
+|---|---|
+| `enabled` | Enable/disable the web server |
+| `port` | Port to listen on — make sure it's open in your firewall |
+| `host` | **Always `0.0.0.0`** — do NOT put your IP here |
+| `public-url` | The URL players use to access the editor. Must include `http://` |
+| `theme` | Colour theme for the website |
+| `layout` | Website layout template |
+
+</details>
+
+<details>
+<summary><b>Profile Settings</b></summary>
 
 ```yaml
 profiles:
-  # Enable multiple character profiles per player
   enabled: true
-  # Maximum profiles per player
   max-per-player: 5
 ```
 
-### Feature Toggles
+</details>
 
-Control which customization features are available:
+<details>
+<summary><b>Feature Toggles</b></summary>
 
 ```yaml
 features:
-  skin-change: true    # Allow changing base skin
-  skin-colour: true    # Allow changing skin palette
-  eye-colour: true     # Allow changing eye color
-  eye-style: true      # Allow changing eye style
-  hair-colour: true    # Allow changing hair color
-  hair-style: true     # Allow changing hair style
-  beard-style: true    # Allow changing beard style
+  skin-change: true
+  skin-colour: true
+  eye-colour: true
+  eye-style: true
+  hair-colour: true
+  hair-style: true
+  beard-style: true
 ```
 
-### Session Settings
+Disable any feature to hide it from the web editor.
 
-```yaml
-session:
-  expiry-minutes: 1440  # 24 hours
-  max-per-player: 1
-```
+</details>
 
-### Cooldown Settings
-
-```yaml
-cooldown:
-  enabled: true
-  seconds: 30  # Time between link requests
-```
-
-### MineSkin API
-
-```yaml
-mineskin:
-  api-key: "your-api-key"
-  variant: "auto"  # "steve", "slim", or "auto"
-```
-
-### Skin Application
+<details>
+<summary><b>Skin Application</b></summary>
 
 ```yaml
 skin-apply:
-  auto-apply: true       # Apply skin when player saves
-  apply-on-join: true    # Apply saved skin on login
+  auto-apply: true       # Apply skin when player saves in wardrobe
+  apply-on-join: true    # Apply saved skin on player join
   apply-message: "&aYour custom skin has been applied!"
   apply-failed: "&cFailed to apply skin. Please try again later."
 ```
 
-### Storage
+</details>
+
+<details>
+<summary><b>Session & Cooldown</b></summary>
 
 ```yaml
-storage:
-  data-folder: "playerdata"
-  web-folder: "web"
+session:
+  expiry-minutes: 1440   # 24 hours
+  max-per-player: 1
+
+cooldown:
+  enabled: true
+  seconds: 30
 ```
 
-### Messages
+</details>
 
-All messages support color codes with `&`:
+<details>
+<summary><b>Messages</b></summary>
+
+All messages support `&` colour codes:
 
 ```yaml
 messages:
@@ -221,709 +213,358 @@ messages:
   cooldown-message: "&cPlease wait %time% before requesting a new link."
 ```
 
+</details>
+
 ---
 
 ## 💬 Commands
 
-### Player Commands
+| Command | Description | Permission |
+|---|---|---|
+| `/webchar` | Open editor for default profile | `webchar.use` |
+| `/webchar editor [profile]` | Open editor for a specific profile | `webchar.use` |
+| `/webchar create <name>` | Create a new character profile | `webchar.use` |
+| `/webchar delete <name>` | Delete a character profile | `webchar.use` |
+| `/webchar list` | List all your profiles | `webchar.use` |
+| `/webchar load <profile>` | Load/apply a profile's skin in-game | `webchar.use` |
+| `/webchar apply <profile>` | Alias for `load` | `webchar.use` |
+| `/webchar rename <old> <new>` | Rename a profile | `webchar.use` |
+| `/webchar copy <source> <new>` | Duplicate a profile | `webchar.use` |
+| `/webchar setskin <profile>` | Set a profile as your active skin | `webchar.use` |
+| `/webchar resetskin` | Reset to your original Minecraft skin | `webchar.use` |
+| `/webchar loadfor <player> <profile>` | Apply another player's profile to them | `webchar.admin` |
+| `/webchar link <player> [profile]` | Generate editor link for another player | `webchar.link.others` |
+| `/webchar give <player> <type> <id>` | Give an owned item to a player | `webchar.admin` |
+| `/webchar revoke <player> <type> <id>` | Revoke an owned item | `webchar.admin` |
+| `/webchar reload` | Reload config and rescan overlays | `webchar.reload` |
+| `/webchar status` | Show plugin & web server status | `webchar.admin` |
+| `/webchar sessions` | List all active sessions | `webchar.admin` |
+| `/webchar help` | Show command help | `webchar.use` |
 
-| Command | Description |
-|---------|-------------|
-| `/webchar` | Open the default character editor |
-| `/webchar editor [profile]` | Edit a specific character profile |
-| `/webchar create <name>` | Create a new character profile |
-| `/webchar delete <name>` | Delete a character profile |
-| `/webchar list` | List your character profiles |
-| `/webchar profiles` | Alias for list |
-| `/webchar load <profile> [outfit]` | Load a profile's skin (optionally a specific saved outfit) |
-| `/webchar apply <profile> [outfit]` | Alias for load |
-| `/webchar help` | Show command help |
-
-**Aliases**: `/wc`, `/character`
-
-### Admin Commands
-
-| Command | Description |
-|---------|-------------|
-| `/webchar reload` | Reload configuration & rescan overlays |
-| `/webchar status` | Show plugin status (web server, sessions, etc.) |
-| `/webchar link <player>` | Generate a wardrobe link for another player |
-| `/webchar sessions` | List all active sessions |
-| `/webchar loadfor <player> <profile> [outfit]` | Load a profile/outfit for another player |
-
-### Ownership Commands (Admin)
-
-| Command | Description |
-|---------|-------------|
-| `/webchar give <player> all` | Give all overlays to a player |
-| `/webchar give <player> category <cat>` | Give all overlays in a category |
-| `/webchar give <player> overlay <cat> <id>` | Give a specific overlay |
-| `/webchar revoke <player> all` | Revoke all owned overlays from a player |
-| `/webchar revoke <player> category <cat>` | Revoke a category from a player |
-| `/webchar revoke <player> overlay <cat> <id>` | Revoke a specific overlay |
+**Aliases:** `/wc`, `/character`
 
 ---
 
-## 🔐 Permissions
+## 🔑 Permissions
 
-### Basic Permissions
-
-| Permission | Default | Description |
-|------------|---------|-------------|
-| `webchar.use` | `true` | Use the character editor |
-| `webchar.admin` | `op` | Access admin commands |
-| `webchar.reload` | `op` | Reload configuration |
-| `webchar.link.others` | `op` | Generate links for other players |
-
-### Item Permissions
-
-| Permission | Description |
-|------------|-------------|
-| `wardrobepanel.bypass` | Bypass all permission checks (see all items) |
-| `wardrobepanel.*` | Access to all skins and overlays |
-| `wardrobepanel.skin.*` | Access to all base skins |
-| `wardrobepanel.skin.<skin-id>` | Access to a specific base skin |
-| `wardrobepanel.overlay.*` | Access to all overlays |
-| `wardrobepanel.overlay.<category>.*` | Access to all overlays in a category |
-| `wardrobepanel.overlay.<category>.<overlay-id>` | Access to a specific overlay |
-
-### Permission Examples
-
-```yaml
-# Give access to all hair styles
-- wardrobepanel.overlay.hairs.*
-
-# Give access to a specific shirt
-- wardrobepanel.overlay.shirts.steve-male-casual_tee
-
-# Give access to all jackets
-- wardrobepanel.overlay.jackets.*
-
-# Give access to a specific base skin
-- wardrobepanel.skin.base-steve-male
-
-# Give full bypass (see everything)
-- wardrobepanel.bypass
-```
+| Permission | Description | Default |
+|---|---|---|
+| `webchar.use` | Use the character editor and basic commands | `true` |
+| `webchar.admin` | Admin commands: loadfor, give, revoke, status, sessions | `op` |
+| `webchar.reload` | Reload plugin configuration | `op` |
+| `webchar.link.others` | Generate editor links for other players | `op` |
+| `wardrobepanel.bypass` | Bypass all permission filtering (see all items) | — |
+| `wardrobepanel.skin.<id>` | Access a specific base skin | — |
+| `wardrobepanel.overlay.<category>.<id>` | Access a specific overlay | — |
+| `wardrobepanel.overlay.<category>.*` | Access all overlays in a category | — |
+| `wardrobepanel.overlay.*` | Access all overlays | — |
 
 ---
 
-## 🎫 Permission-Based Item Filtering
+## 📊 PlaceholderAPI
 
-The permission system allows fine-grained control over which items players can see and use.
+> Requires [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/)
 
-### Configuration
+All placeholders use the prefix `%wardrobepanel_<placeholder>%`
 
-```yaml
-permissions:
-  # Enable permission-based filtering
-  enabled: true
-  
-  # Default behavior for items without specific permissions
-  # true = players can use items by default
-  # false = players need explicit permission
-  default-allowed: true
-  
-  # Permission to bypass all checks
-  bypass-permission: "wardrobepanel.bypass"
-```
-
-### How It Works
-
-1. When `permissions.enabled: true`, players only see items they have permission for
-2. When `default-allowed: true`, players see all items unless explicitly denied
-3. When `default-allowed: false`, players see nothing unless explicitly granted
-4. Players with `wardrobepanel.bypass` see all items regardless
-
-### Permission Format
-
-| Type | Format | Example |
-|------|--------|---------|
-| Base Skin | `wardrobepanel.skin.<skin-id>` | `wardrobepanel.skin.base-steve-male` |
-| Overlay | `wardrobepanel.overlay.<category>.<overlay-id>` | `wardrobepanel.overlay.hairs.male-90s_Side_Part` |
-| Category | `wardrobepanel.overlay.<category>.*` | `wardrobepanel.overlay.hairs.*` |
-| All Overlays | `wardrobepanel.overlay.*` | - |
-| All Skins | `wardrobepanel.skin.*` | - |
-| Everything | `wardrobepanel.*` | - |
-
----
-
-## 🎁 Owned Items System
-
-The owned items system allows you to grant specific overlays to players independently of permissions. This is useful for shop systems, rewards, or progression mechanics.
-
-### Configuration
-
-```yaml
-owned-items:
-  # Enable the owned items system
-  enabled: false
-  
-  # Categories always available to everyone
-  starter-categories:
-    - "eyes"
-  
-  # Specific starter overlays (format: category/overlayId)
-  starter-overlays: []
-  
-  # Combine with permission system
-  combine-with-permissions: true
-```
-
-### Behavior
-
-- **When `enabled: false`**: Only the permission system is used
-- **When `enabled: true`**: Players see owned items + starter items
-- **When `combine-with-permissions: true`**: Players see owned + starter + permission-allowed items
-- **When `combine-with-permissions: false`**: Only owned + starter items are shown (permissions ignored)
-
-### Granting/Revoking Items
-
-Use the admin commands to manage player-owned items:
-
-```bash
-# Give all overlays to a player
-/webchar give PlayerName all
-
-# Give all items in the hairs category
-/webchar give PlayerName category hairs
-
-# Give a specific overlay
-/webchar give PlayerName overlay shirts casual_tee
-
-# Revoke all items
-/webchar revoke PlayerName all
-
-# Revoke a category
-/webchar revoke PlayerName category hairs
-
-# Revoke a specific overlay
-/webchar revoke PlayerName overlay shirts casual_tee
-```
-
-### Storage
-
-Owned items are stored in `plugins/WardrobePanel/playerdata/<uuid>_owned.json`.
-
----
-
-## 👥 Character Profiles
-
-Players can create multiple character profiles, each with their own outfit configuration.
-
-### Configuration
-
-```yaml
-profiles:
-  enabled: true
-  max-per-player: 5
-```
-
-### Usage
-
-```bash
-# Create a new profile
-/webchar create MyKnight
-
-# Edit a specific profile
-/webchar editor MyKnight
-
-# List all profiles
-/webchar list
-
-# Delete a profile
-/webchar delete MyKnight
-
-# Load/apply a profile's skin in-game
-/webchar load MyKnight
-
-# Admins can load profiles for other players
-/webchar loadfor PlayerName MyKnight
-```
-
-### Storage
-
-Profiles are stored in `plugins/WardrobePanel/profiles/<uuid>.json`.
-
----
-
-## 🏷️ PlaceholderAPI Support
-
-WardrobePanel provides full PlaceholderAPI integration, allowing you to display player wardrobe information in scoreboards, tab lists, chat formats, and more.
-
-### Requirements
-
-- [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) must be installed
-- The expansion registers automatically when PlaceholderAPI is detected
-
-### Available Placeholders
-
-#### Profile Placeholders
-
-| Placeholder | Description | Example Output |
-|-------------|-------------|----------------|
-| `%wardrobepanel_profile_count%` | Number of profiles the player has | `3` |
-| `%wardrobepanel_profile_current%` | Name of the currently active profile | `MyKnight` |
-| `%wardrobepanel_profile_list%` | Comma-separated list of all profile names | `MyKnight, Mage, Default` |
-| `%wardrobepanel_profile_max%` | Maximum profiles allowed for the player | `5` |
-
-#### Outfit Placeholders
-
-| Placeholder | Description | Example Output |
-|-------------|-------------|----------------|
-| `%wardrobepanel_outfit_hair%` | Current hair style ID | `male-90s_Side_Part` |
-| `%wardrobepanel_outfit_hair_color%` | Current hair color (hex) | `#8B4513` |
-| `%wardrobepanel_outfit_eye%` | Current eye style ID | `blue_eyes` |
-| `%wardrobepanel_outfit_eye_color%` | Current eye color (hex) | `#1E90FF` |
-| `%wardrobepanel_outfit_skin%` | Current base skin ID | `base-steve-male` |
-| `%wardrobepanel_outfit_skin_color%` | Current skin tone (hex) | `#DEB887` |
-| `%wardrobepanel_outfit_shirt%` | Current shirt overlay ID | `casual_tee` |
-| `%wardrobepanel_outfit_pants%` | Current pants overlay ID | `jeans` |
-| `%wardrobepanel_outfit_shoes%` | Current shoes overlay ID | `sneakers` |
-| `%wardrobepanel_outfit_jacket%` | Current jacket overlay ID | `leather_jacket` |
-| `%wardrobepanel_outfit_accessory%` | Current accessory overlay ID | `glasses` |
-| `%wardrobepanel_outfit_beard%` | Current beard overlay ID | `stubble` |
-| `%wardrobepanel_outfit_marking%` | Current marking overlay ID | `scar_eye` |
-
-#### Ownership Placeholders
-
-| Placeholder | Description | Example Output |
-|-------------|-------------|----------------|
-| `%wardrobepanel_owned_count%` | Total number of owned overlays | `42` |
-| `%wardrobepanel_owned_hairs%` | Number of owned hair styles | `12` |
-| `%wardrobepanel_owned_shirts%` | Number of owned shirts | `8` |
-| `%wardrobepanel_owned_pants%` | Number of owned pants | `6` |
-| `%wardrobepanel_owned_<category>%` | Number of owned items in any category | `5` |
-| `%wardrobepanel_owns_all%` | Whether player owns all items | `true` or `false` |
-
-#### Session Placeholders
-
-| Placeholder | Description | Example Output |
-|-------------|-------------|----------------|
-| `%wardrobepanel_session_active%` | Whether player has an active session | `true` or `false` |
-| `%wardrobepanel_session_expires%` | Minutes until session expires | `45` |
-| `%wardrobepanel_cooldown_remaining%` | Seconds until cooldown ends | `15` |
-
-#### Statistics Placeholders
-
-| Placeholder | Description | Example Output |
-|-------------|-------------|----------------|
-| `%wardrobepanel_total_skins_applied%` | Total skins the player has applied | `27` |
-| `%wardrobepanel_last_skin_change%` | Time since last skin change | `2h ago` |
-| `%wardrobepanel_has_custom_skin%` | Whether player has a custom skin applied | `true` or `false` |
-
-### Usage Examples
-
-#### Scoreboard (using Featherboard, AnimatedScoreboard, etc.)
-
-```yaml
-lines:
-  - "&6Profile: &f%wardrobepanel_profile_current%"
-  - "&6Outfits: &f%wardrobepanel_profile_count%/%wardrobepanel_profile_max%"
-  - "&6Owned Items: &f%wardrobepanel_owned_count%"
-```
-
-#### Tab List (using TAB plugin)
-
-```yaml
-playerlist:
-  header:
-    - "&6=== Wardrobe Stats ==="
-  footer:
-    - "&7Current Look: &f%wardrobepanel_profile_current%"
-```
-
-#### Chat Format (using EssentialsX, LuckPerms, etc.)
-
-```
-[%wardrobepanel_profile_current%] %player_name%: %message%
-```
-
-#### DeluxeMenus GUI
-
-```yaml
-items:
-  profile-info:
-    material: PLAYER_HEAD
-    slot: 13
-    display_name: "&6Your Wardrobe"
-    lore:
-      - "&7Active Profile: &f%wardrobepanel_profile_current%"
-      - "&7Total Profiles: &f%wardrobepanel_profile_count%"
-      - "&7Owned Items: &f%wardrobepanel_owned_count%"
-      - ""
-      - "&eClick to open wardrobe!"
-```
-
-### Relational Placeholders
-
-For comparing players (useful in PvP or social plugins):
+### Profile Placeholders
 
 | Placeholder | Description |
-|-------------|-------------|
-| `%rel_wardrobepanel_same_outfit%` | Whether two players have the same outfit |
-| `%rel_wardrobepanel_same_profile%` | Whether two players have the same profile name |
+|---|---|
+| `%wardrobepanel_profile_count%` | Number of profiles the player has |
+| `%wardrobepanel_profile_current%` | Currently active profile name |
+| `%wardrobepanel_profile_list%` | Comma-separated list of all profile names |
+| `%wardrobepanel_profile_max%` | Maximum profiles allowed (from config) |
+| `%wardrobepanel_profile_name_0%` | Profile name by index (0, 1, 2...) |
+| `%wardrobepanel_last_profile%` | Last used profile name |
 
-### Configuration
+### Outfit Placeholders
 
-PlaceholderAPI support can be configured in `config.yml`:
+| Placeholder | Description |
+|---|---|
+| `%wardrobepanel_outfit_skin%` | Current base skin ID |
+| `%wardrobepanel_outfit_skin_color%` | Current skin palette |
+| `%wardrobepanel_outfit_hair%` | Current hairstyle overlay ID |
+| `%wardrobepanel_outfit_hair_color%` | Current hair colour palette |
+| `%wardrobepanel_outfit_eye%` | Current eye overlay ID |
+| `%wardrobepanel_outfit_eye_color%` | Current eye colour palette |
+| `%wardrobepanel_outfit_shirt%` | Current shirt overlay ID |
+| `%wardrobepanel_outfit_pants%` | Current pants overlay ID |
+| `%wardrobepanel_outfit_shoes%` | Current shoes overlay ID |
+| `%wardrobepanel_outfit_jacket%` | Current jacket overlay ID |
+| `%wardrobepanel_outfit_accessory%` | Current accessory overlay ID |
+| `%wardrobepanel_outfit_beard%` | Current beard overlay ID |
+| `%wardrobepanel_outfit_marking%` | Current marking overlay ID |
 
+### Web & Session Placeholders
+
+| Placeholder | Description |
+|---|---|
+| `%wardrobepanel_web_url%` | Public URL of the web editor |
+| `%wardrobepanel_skin_url%` | URL to the player's saved skin image |
+| `%wardrobepanel_theme%` | Current theme name |
+| `%wardrobepanel_session_active%` | `true`/`false` if player has active session |
+| `%wardrobepanel_session_expires%` | Minutes until session expires |
+| `%wardrobepanel_cooldown_remaining%` | Seconds left on link cooldown |
+
+### Ownership & Stats Placeholders
+
+| Placeholder | Description |
+|---|---|
+| `%wardrobepanel_owned_count%` | Total number of owned items |
+| `%wardrobepanel_owned_<category>%` | Number of owned items in a category |
+| `%wardrobepanel_owns_all%` | `true`/`false` if player owns everything |
+| `%wardrobepanel_total_skins_applied%` | Total skin applications by this player |
+| `%wardrobepanel_last_skin_change%` | Timestamp of last skin change |
+
+---
+
+## 📐 Website Layouts
+
+WardrobePanel ships with **6 different website layouts**. Switch between them easily.
+
+| Layout | Description |
+|---|---|
+| **`classic`** ⭐ | 3-column: Left sidebar \| Center viewer \| Right panel |
+| **`centered`** | Full-screen viewer with floating glassmorphism panels |
+| **`compact`** | Slim top bar + two-column (Viewer \| Panel) |
+| **`stacked`** | Thin sidebar + vertical split (viewer top, panel bottom) |
+| **`theater`** | Full-screen viewer with slide-out drawer panels |
+| **`minimal`** | Full viewer + bottom bar + slide-out customiser |
+
+### Switching Layouts
+
+**Method 1 — Via config.yml (recommended):**
 ```yaml
-placeholderapi:
-  # Enable PlaceholderAPI integration
-  enabled: true
-  
-  # Cache duration for placeholder values (seconds)
-  cache-duration: 5
-  
-  # Format for empty/none values
-  empty-format: "None"
-  
-  # Format for time displays
-  time-format: "%dm %ss"
+web:
+  layout: "theater"    # classic, centered, compact, stacked, theater, minimal
+```
+Then `/webchar reload`
+
+**Method 2 — Manual copy:**
+1. Navigate to `plugins/WardrobePanel/web/layouts/`
+2. Open your chosen layout folder (e.g. `layout-theater/`)
+3. Copy `index.html` and `style.css` into `plugins/WardrobePanel/web/` (overwrite existing)
+4. Set `layout: "custom"` in config.yml to prevent overwrite on reload
+5. Run `/webchar reload`
+
+**Method 3 — Linux command:**
+```bash
+cp plugins/WardrobePanel/web/layouts/layout-theater/index.html plugins/WardrobePanel/web/index.html
+cp plugins/WardrobePanel/web/layouts/layout-theater/style.css plugins/WardrobePanel/web/style.css
 ```
 
 ---
 
-## 🎨 MineSkin API Integration
+## 🎨 Themes
 
-WardrobePanel uses the MineSkin API to generate signed skin textures that can be applied to players.
-
-### Getting an API Key
-
-1. Visit [https://mineskin.org/apikey](https://mineskin.org/apikey)
-2. Log in with your Minecraft account
-3. Generate an API key
-4. Add the key to your config:
-
-```yaml
-mineskin:
-  api-key: "your-api-key-here"
-  variant: "auto"
-```
-
-### Skin Variants
-
-- `"steve"`: Classic wide arms (4px)
-- `"slim"` or `"alex"`: Slim arms (3px)
-- `"auto"`: Automatically detect from base skin selection
-
-### Rate Limits
-
-MineSkin has rate limits on their free tier. If you have a high-traffic server, consider:
-- Getting a premium API key
-- Implementing caching for frequently used skins
-- Adding longer cooldowns between skin changes
-
----
-
-## 🌐 Web Server Setup
-
-### Built-in Web Server
-
-The plugin includes a built-in web server (Javalin). No external hosting is required.
+Set your theme in `config.yml`:
 
 ```yaml
 web:
-  enabled: true
-  port: 50424
-  host: "0.0.0.0"
-  public-url: "http://your-domain-or-ip:50424"
+  theme: "midnight"
 ```
 
-### Reverse Proxy Setup (Recommended for Production)
+| Theme | Description |
+|---|---|
+| `default` | Dark charcoal with teal accents |
+| `midnight` | Deep navy blue |
+| `ocean` | Ocean blue tones |
+| `forest` | Dark green woodland |
+| `sunset` | Warm amber and orange |
+| `cherry` | Deep magenta / cherry blossom |
+| `nether` | Fiery red and dark crimson |
+| `end` | Purple and dark void |
+| `royal` | Deep purple and gold |
+| `steampunk` | Bronze and copper tones |
+| `pastel` | Soft pastel colours |
+| `arctic` | Icy blue and white |
 
-For production use, run behind a reverse proxy (nginx, Apache, Cloudflare) with HTTPS.
-
-#### Nginx Example
-
-```nginx
-server {
-    listen 443 ssl http2;
-    server_name wardrobe.yourserver.com;
-    
-    ssl_certificate /path/to/cert.pem;
-    ssl_certificate_key /path/to/key.pem;
-    
-    location / {
-        proxy_pass http://localhost:50424;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
-
-Update your config to use the HTTPS URL:
-
-```yaml
-web:
-  public-url: "https://wardrobe.yourserver.com"
-```
+Themes are applied globally — all 6 layouts support all 12 themes.
 
 ---
 
-## 🖼️ Adding Custom Overlays
+## 🖼️ Customising Website Assets
+
+You can swap out the visual assets without touching any code.
+
+Navigate to `plugins/WardrobePanel/web/assets/` and replace these files:
+
+| Path | What it is | Size to keep |
+|---|---|---|
+| `bg/bg.png` | Background image for the editor | Any resolution |
+| `cursor/mouse.png` | Default cursor | 32×32 or similar |
+| `cursor/mouse_click.png` | Cursor when clicking | 32×32 |
+| `cursor/mousedraghover.png` | Cursor when hovering the 3D viewer | 32×32 |
+| `cursor/mouse_drag.png` | Cursor when dragging the 3D viewer | 32×32 |
+| `font/minecraft.woff2` | The font used throughout the UI | `.woff2` format |
+| `icons/*.png` | Category icons in the panel (eyes.png, hairs.png, shirts.png, etc.) | 64×64 recommended |
+
+> **Keep the same filenames and sizes** — just replace the PNGs.
+
+After replacing, `/webchar reload` or restart the server.
+
+---
+
+## 👕 Adding / Changing Overlays & Skins
 
 ### Folder Structure
 
-Overlays are stored in `plugins/WardrobePanel/overlays/` with category subfolders:
-
 ```
-overlays/
-├── hairs/
-│   ├── male/
-│   │   └── cool_hairstyle.png
-│   ├── female/
-│   │   └── long_hair.png
-│   └── any/
-│       └── generic_style.png
-├── shirts/
-│   ├── steve-male/
-│   ├── alex-male/
-│   ├── female/
-│   └── any/
-├── pants/
-├── shoes/
-├── accessories/
-├── beards/
-├── markings/
-└── eyes/
+web/assets/
+├── overlays/
+│   ├── accessories/     ← Accessory overlays
+│   ├── beards/          ← Beard overlays
+│   ├── eyes/            ← Eye overlays
+│   ├── hairs/           ← Hair overlays
+│   ├── jackets/         ← Jacket overlays
+│   ├── markings/        ← Marking overlays
+│   ├── pants/           ← Pants overlays
+│   ├── shirts/          ← Shirt overlays
+│   ├── shoes/           ← Shoe overlays
+│   └── skin-colours/    ← Base skin PNG files
+├── skins/               ← Base skin files (used for preview rendering)
+├── manifest.json        ← Auto-generated index of all overlays
+└── catalog.json         ← Category definitions, palettes, colours
 ```
 
-### Naming Convention
+### Adding New Overlays
 
-Overlay filenames become the overlay ID. The subfolder determines the gender/model compatibility:
+1. Create your overlay as a **64×64 PNG** (standard Minecraft skin format)
+2. Only draw on the 2nd layer (overlay layer) of the skin template
+3. Drop the PNG file into the appropriate category folder (e.g. `overlays/hairs/`)
+4. Run `/webchar reload` in-game — the manifest is regenerated automatically
+5. The new overlay will appear in the editor immediately
 
-- `male/` - Only for male characters
-- `female/` - Only for female characters
-- `steve-male/` - For Steve model male characters
-- `alex-male/` - For Alex model male characters
-- `any/` - Available to all character types
+### Changing Base Skins
 
-### File Requirements
-
-- **Format**: PNG with transparency
-- **Size**: 64x64 pixels (standard Minecraft skin format)
-- **Layers**: Use alpha channel for transparent areas
-
-### Auto-Scanning
-
-When you add new overlay files:
-
-1. Place the PNG in the appropriate category/model folder
-2. Run `/webchar reload`
-3. The manifest will be automatically regenerated
-
-### Example: Adding a New Shirt
-
-1. Create your shirt overlay as a 64x64 PNG
-2. Save it to `plugins/WardrobePanel/overlays/shirts/steve-male/my_cool_shirt.png`
+1. Replace or add PNGs in `overlays/skin-colours/`
+2. Keep the naming convention: `base-steve-male.png`, `base-alex-female.png`, etc.
 3. Run `/webchar reload`
-4. The overlay is now available in the wardrobe panel
+
+> ⚠️ **Important:** When the plugin reloads or starts, it auto-scans all overlay folders and regenerates `manifest.json`. You never need to edit manifest.json manually.
 
 ---
 
-## 🏞️ Panorama Background
+## 👤 Profiles & Saved Outfits
 
-The wardrobe panel supports interactive panorama backgrounds that move with the 3D viewer camera.
+### Profiles
 
-### Minecraft-style Cubemap (Recommended)
+Each player can have multiple character profiles (like RPG character slots):
 
-Place 6 panorama images in `plugins/WardrobePanel/web/assets/bg/`:
+- **Create:** `/webchar create MyWarrior`
+- **List:** `/webchar list`
+- **Edit:** `/webchar editor MyWarrior` — opens the web editor for that profile
+- **Load/Apply:** `/webchar load MyWarrior` — applies that profile's skin in-game
+- **Rename:** `/webchar rename MyWarrior MyKnight`
+- **Copy:** `/webchar copy MyWarrior MyBackup`
+- **Delete:** `/webchar delete MyWarrior`
 
-| File | Direction |
-|------|-----------|
-| `panorama_0.png` | Right face (+X) |
-| `panorama_1.png` | Left face (-X) |
-| `panorama_2.png` | Top face (+Y) |
-| `panorama_3.png` | Bottom face (-Y) |
-| `panorama_4.png` | Front face (+Z) |
-| `panorama_5.png` | Back face (-Z) |
+### Saved Outfits
 
-Images should be square (512x512 or 1024x1024).
+Within each profile, players can save multiple named outfits in the web editor:
 
-### Single Equirectangular Image
-
-Alternatively, place a single panorama at `assets/bg/panorama.png` (2:1 aspect ratio, e.g., 2048x1024).
-
-### Getting Panorama Images
-
-- Extract from Minecraft: `assets/minecraft/textures/gui/title/background/`
-- Use shader mods to capture custom screenshots
-- Find pre-made Minecraft panoramas online
-
-### Fallback Order
-
-1. Minecraft cubemap (`panorama_0.png` to `panorama_5.png`)
-2. Single equirectangular (`panorama.png`)
-3. Static background (`bg.png`)
+1. Customise your character in the editor
+2. Click the **+** button in the sidebar
+3. Enter a name for the outfit
+4. The outfit appears in the sidebar — click to load it anytime
+5. Hover and click **✕** to delete
 
 ---
 
-## 📁 File Structure
+## 🛒 Owned Items System
+
+Enable a shop-like system where players must "own" items before they can use them:
+
+```yaml
+owned-items:
+  enabled: true
+  starter-categories:
+    - "eyes"               # Everyone gets all eyes for free
+  starter-overlays: []     # Specific free overlays: ["hairs/short_hair"]
+  combine-with-permissions: true
+```
+
+### Admin Commands
 
 ```
-plugins/WardrobePanel/
-├── config.yml              # Main configuration
-├── overlays/               # Custom overlay images
-│   ├── hairs/
-│   ├── shirts/
-│   ├── pants/
-│   └── ...
-├── skins/                  # Base skin images
-├── profiles/               # Character profile data
-│   └── <uuid>.json
-├── playerdata/             # Player outfit and ownership data
-│   ├── <uuid>.json         # Outfit configuration
-│   ├── <uuid>_skin.png     # Exported skin image
-│   └── <uuid>_owned.json   # Owned items
-└── web/                    # Website files
-    ├── index.html
-    ├── main.js
-    ├── style.css
-    └── assets/
-        ├── manifest.json   # Auto-generated overlay catalog
-        ├── catalog.json
-        ├── overlays/       # Copied overlay images
-        ├── skins/          # Copied skin images
-        ├── bg/             # Background/panorama images
-        └── icons/
+/webchar give <player> all                    — Give all items
+/webchar give <player> category <name>        — Give all items in a category
+/webchar give <player> overlay <category/id>  — Give a specific overlay
+
+/webchar revoke <player> all                  — Revoke all items
+/webchar revoke <player> category <name>      — Revoke items in a category
+/webchar revoke <player> overlay <category/id>— Revoke a specific overlay
 ```
+
+---
+
+## 🔐 Permission-Based Filtering
+
+Control which items players can see in the editor:
+
+```yaml
+permissions:
+  enabled: true
+  default-allowed: true    # true = see everything unless denied
+  bypass-permission: "wardrobepanel.bypass"
+```
+
+### Permission Nodes
+
+| Pattern | Example | Description |
+|---|---|---|
+| `wardrobepanel.skin.<id>` | `wardrobepanel.skin.base-steve-male` | Access to a specific base skin |
+| `wardrobepanel.overlay.<cat>.<id>` | `wardrobepanel.overlay.hairs.male-90s_Side_Part` | Access to a specific overlay |
+| `wardrobepanel.overlay.<cat>.*` | `wardrobepanel.overlay.hairs.*` | Access to all overlays in a category |
+| `wardrobepanel.overlay.*` | — | Access to all overlays |
+| `wardrobepanel.bypass` | — | See all items (bypass filtering) |
 
 ---
 
 ## 🔧 Troubleshooting
 
-### "Web server is not running"
+### "ERR_CONNECTION_REFUSED" / Site can't be reached
 
-- Check if the port is already in use by another application
-- Check server logs for startup errors
-- Try a different port in config.yml
-- Ensure Java has permission to bind to the port
+1. ✅ Make sure `host` is `"0.0.0.0"` in config.yml — NOT your IP
+2. ✅ Make sure the port is open in your hosting firewall
+3. ✅ Make sure `public-url` has `http://` prefix
+4. ✅ Check the console — look for `Web server started on 0.0.0.0:PORT`
 
-### "Website files not found"
+### "BindException: Cannot assign requested address"
 
-- Ensure the `web/` folder exists in the plugin directory
-- Check that `index.html` exists in the web folder
-- Run `/webchar reload` to regenerate assets
+You put your server IP in the `host` field. Change it to `"0.0.0.0"`.
 
-### Players can't access the panel
+### Skin not applying in-game
 
-- **Firewall**: Ensure the port is open (inbound TCP)
-- **Port Forwarding**: Configure your router if behind NAT
-- **Public URL**: Verify `web.public-url` is correct
-- **Test Locally**: Try `http://localhost:50424` first
+1. ✅ Check your MineSkin API key is valid
+2. ✅ Make sure SkinsRestorer is installed
+3. ✅ Try `/webchar load <profile>` manually
+4. ✅ Check console for MineSkin API errors
 
-### Skin not applying
+### Web editor loads but shows "Session invalid"
 
-- **MineSkin API Key**: Ensure it's valid and not expired
-- **Rate Limits**: Wait if you've hit API limits
-- **Server Logs**: Check for API error messages
-- **Paper Server**: Skin application works best on Paper
+1. ✅ Make sure `public-url` matches the URL you're visiting
+2. ✅ Use a fresh link from `/webchar editor`
+3. ✅ Sessions expire after the configured time (default: 24h)
 
-### Session expired too quickly
+### Overlays not showing after adding new files
 
-- Increase `session.expiry-minutes` in config
-- Check that server time is correct
-- Ensure only one session per player (`max-per-player: 1`)
-
-### Overlays not appearing
-
-- Check file format (must be PNG)
-- Verify image size (64x64 pixels)
-- Ensure correct folder structure
-- Run `/webchar reload` after adding files
-- Check permissions if using permission system
-
-### Debug Mode
-
-Enable debug logging for more detailed output:
-
-```yaml
-debug: true
-```
+1. ✅ Run `/webchar reload` to regenerate the manifest
+2. ✅ Make sure overlays are 64×64 PNG files
+3. ✅ Check the overlay is in the correct category folder
 
 ---
 
-## 📡 API Reference
+## 💬 Support
 
-### REST API Endpoints
-
-The web server exposes a REST API for plugin integration.
-
-#### Create Session
-```http
-POST /api/plugin/session
-Headers: X-API-Key: your-api-key
-Body: { "playerUuid": "uuid", "playerName": "name" }
-Response: { "success": true, "token": "...", "url": "...", "expiresAt": 123456789 }
-```
-
-#### Invalidate Session
-```http
-DELETE /api/plugin/session
-Headers: X-API-Key: your-api-key
-Body: { "token": "session-token" }
-Response: { "success": true }
-```
-
-#### Get Player Outfit
-```http
-GET /api/plugin/outfit?playerUuid=uuid
-Headers: X-API-Key: your-api-key
-Response: { "success": true, "outfit": { ... } }
-```
-
-#### Validate Session (Client)
-```http
-GET /api/session/validate?token=session-token
-Response: { "success": true, "playerName": "...", "playerUuid": "...", "outfit": { ... } }
-```
-
-#### Save Outfit (Client)
-```http
-POST /api/outfit/save
-Body: { "token": "session-token", "outfit": { ... } }
-Response: { "success": true }
-```
-
-#### Export Skin (Client)
-```http
-POST /api/skin/export
-Body: { "token": "session-token", "skinData": "data:image/png;base64,..." }
-Response: { "success": true, "skinPath": "/api/skin/uuid" }
-```
-
-#### Get Exported Skin
-```http
-GET /api/skin/:playerUuid
-Response: PNG image
-```
+- **Discord:** [https://discord.gg/SG8jvb9WU5](https://discord.gg/SG8jvb9WU5)
+- **GitHub Wiki:** [https://github.com/Anonventions/WardrobePanel-Wiki-V2](https://github.com/Anonventions/WardrobePanel-Wiki-V2)
+- **Issues:** Report bugs on the Discord or GitHub
 
 ---
 
-## 📜 Credits
-
-- **Developed by**: Anonventions (Axmon, amon_m)
-- **3D Skin Preview**: [skinview3d](https://github.com/bs-community/skinview3d)
-- **Skin Signing**: [MineSkin API](https://mineskin.org)
-- **License**: MIT License
-
----
-
-## 🔗 Links
-
-- **GitHub**: [https://github.com/Anonventions](https://github.com/Anonventions)
-- **MineSkin**: [https://mineskin.org](https://mineskin.org)
-- **Issue Tracker**: Report bugs and feature requests on GitHub
-
----
-
-*Last updated: March 6, 2026 | Version 1.3.1*
-
+<p align="center">
+  <b>Made by Anonventions</b><br>
+  <sub>© 2025-2026 Anonventions. All rights reserved.</sub>
+</p>
