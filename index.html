@@ -1,0 +1,1730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WardrobePanel — Documentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-main:      #0f1117;
+      --bg-sidebar:   #161b22;
+      --bg-card:      #161b22;
+      --bg-code:      #1c2128;
+      --accent:       #3b82f6;
+      --accent-hover: #2563eb;
+      --accent-glow:  rgba(59,130,246,0.15);
+      --text:         #e6edf3;
+      --text-muted:   #8b949e;
+      --border:       #30363d;
+      --link:         #58a6ff;
+      --warn-bg:      rgba(245,158,11,0.1);
+      --warn-border:  #f59e0b;
+      --info-bg:      rgba(59,130,246,0.08);
+      --info-border:  #3b82f6;
+      --sidebar-w:    260px;
+      --toc-w:        220px;
+      --topbar-h:     56px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg-main);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #484f58; }
+
+    /* ===== TOP NAV ===== */
+    .topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--topbar-h);
+      background: rgba(15,17,23,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      z-index: 200;
+      gap: 16px;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+    }
+
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .hamburger:hover { color: var(--text); background: var(--border); }
+    .hamburger svg { display: block; }
+
+    .logo-title {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--text);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .logo-title span { color: var(--accent); }
+
+    .topbar-nav {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .topbar-nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: color 0.2s, background 0.2s;
+    }
+    .topbar-nav a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+    .topbar-nav a.active { color: var(--text); background: rgba(59,130,246,0.12); }
+
+    .topbar-search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-sidebar);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 12px;
+      min-width: 200px;
+      cursor: text;
+      transition: border-color 0.2s;
+    }
+    .topbar-search:focus-within { border-color: var(--accent); }
+    .topbar-search svg { color: var(--text-muted); flex-shrink: 0; }
+    .topbar-search input {
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: 13px;
+      font-family: inherit;
+      width: 100%;
+    }
+    .topbar-search input::placeholder { color: var(--text-muted); }
+
+    /* ===== LAYOUT ===== */
+    .layout {
+      display: flex;
+      padding-top: var(--topbar-h);
+      min-height: 100vh;
+    }
+
+    /* ===== LEFT SIDEBAR ===== */
+    .sidebar {
+      position: fixed;
+      top: var(--topbar-h);
+      left: 0;
+      bottom: 0;
+      width: var(--sidebar-w);
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 20px 0 40px;
+      z-index: 100;
+      transition: transform 0.25s ease;
+    }
+
+    .sidebar-section-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      padding: 16px 20px 6px;
+    }
+    .sidebar-section-label:first-child { padding-top: 4px; }
+
+    .sidebar nav a {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 20px;
+      font-size: 13.5px;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-radius: 0;
+      transition: color 0.15s, background 0.15s;
+      position: relative;
+    }
+    .sidebar nav a:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+    .sidebar nav a.active {
+      color: var(--accent);
+      background: var(--accent-glow);
+      font-weight: 500;
+    }
+    .sidebar nav a.active::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+      background: var(--accent);
+      border-radius: 0 2px 2px 0;
+    }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 99;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .content-wrapper {
+      margin-left: var(--sidebar-w);
+      margin-right: var(--toc-w);
+      min-width: 0;
+      flex: 1;
+      padding: 48px 56px;
+      max-width: 860px;
+    }
+
+    /* ===== RIGHT SIDEBAR (TOC) ===== */
+    .toc-sidebar {
+      position: fixed;
+      top: var(--topbar-h);
+      right: 0;
+      bottom: 0;
+      width: var(--toc-w);
+      padding: 32px 20px 40px;
+      overflow-y: auto;
+      border-left: 1px solid var(--border);
+    }
+
+    .toc-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .toc-sidebar ul {
+      list-style: none;
+    }
+
+    .toc-sidebar ul li a {
+      display: block;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 4px 12px;
+      border-left: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      line-height: 1.5;
+    }
+    .toc-sidebar ul li a:hover { color: var(--text); }
+    .toc-sidebar ul li a.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+    }
+
+    /* ===== CONTENT TYPOGRAPHY ===== */
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .hero-badges img { height: 28px; }
+
+    h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .hero-description {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      margin-bottom: 40px;
+      max-width: 640px;
+      line-height: 1.8;
+    }
+
+    .doc-section {
+      margin-bottom: 72px;
+      scroll-margin-top: calc(var(--topbar-h) + 24px);
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      scroll-margin-top: calc(var(--topbar-h) + 24px);
+    }
+
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 28px 0 12px;
+      scroll-margin-top: calc(var(--topbar-h) + 24px);
+    }
+
+    h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text);
+      margin: 20px 0 8px;
+    }
+
+    p { margin-bottom: 14px; color: var(--text); }
+
+    a { color: var(--link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    strong { font-weight: 600; color: var(--text); }
+    em { font-style: italic; }
+
+    ul, ol {
+      margin: 12px 0 16px 20px;
+      color: var(--text);
+    }
+    ul li, ol li { margin-bottom: 6px; }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 48px 0;
+    }
+
+    /* ===== FEATURE CARDS GRID ===== */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent-glow);
+    }
+
+    .card-icon { font-size: 1.4rem; margin-bottom: 10px; }
+    .card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+    .card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+    /* ===== STEP CARDS ===== */
+    .steps { display: flex; flex-direction: column; gap: 16px; margin: 24px 0; }
+
+    .step {
+      display: flex;
+      gap: 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent-glow);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .step-content { flex: 1; }
+    .step-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .step-body { font-size: 13.5px; color: var(--text-muted); }
+    .step-body p { margin-bottom: 8px; }
+    .step-body ul { margin: 6px 0 6px 16px; }
+    .step-body li { margin-bottom: 4px; }
+
+    /* ===== TABLES ===== */
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 20px 0;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+
+    thead tr { background: rgba(59,130,246,0.08); }
+    thead th {
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 600;
+      color: var(--text);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    tbody tr { border-bottom: 1px solid rgba(48,54,61,0.6); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+    tbody td {
+      padding: 10px 16px;
+      color: var(--text-muted);
+      vertical-align: top;
+    }
+
+    tbody td:first-child { color: var(--text); }
+    tbody td code { font-size: 12px; }
+
+    /* ===== CODE BLOCKS ===== */
+    pre {
+      background: var(--bg-code);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      overflow-x: auto;
+      margin: 16px 0;
+      position: relative;
+    }
+
+    pre code {
+      font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #e6edf3;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+      font-size: 12.5px;
+      background: rgba(28,33,40,0.8);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 6px;
+      color: #e6edf3;
+    }
+
+    /* YAML Syntax Highlighting */
+    .yaml-key   { color: #79c0ff; }   /* blue for keys */
+    .yaml-str   { color: #a5d6ff; }   /* light blue for strings */
+    .yaml-val   { color: #ffa657; }   /* orange for values (non-string) */
+    .yaml-bool  { color: #ff7b72; }   /* red for true/false */
+    .yaml-num   { color: #ffa657; }   /* orange for numbers */
+    .yaml-comment{ color: #8b949e; font-style: italic; } /* muted for comments */
+
+    /* Bash syntax */
+    .bash-cmd   { color: #79c0ff; }
+    .bash-path  { color: #a5d6ff; }
+    .bash-comment { color: #8b949e; font-style: italic; }
+
+    /* Copy button */
+    .pre-wrapper { position: relative; }
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--border);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text-muted);
+      border-radius: 5px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      opacity: 0;
+    }
+    .pre-wrapper:hover .copy-btn { opacity: 1; }
+    .copy-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .copy-btn.copied { background: #238636; color: #fff; border-color: #238636; }
+
+    /* ===== CALLOUT BOXES ===== */
+    .callout {
+      display: flex;
+      gap: 12px;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 16px 0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .callout-warn {
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-border);
+      color: #fbbf24;
+    }
+
+    .callout-info {
+      background: var(--info-bg);
+      border: 1px solid var(--info-border);
+      color: #93c5fd;
+    }
+
+    .callout-icon { flex-shrink: 0; font-size: 16px; margin-top: 1px; }
+    .callout-body { color: inherit; }
+    .callout-body strong { color: inherit; }
+    .callout-body code { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); color: inherit; }
+
+    /* ===== DETAILS / COLLAPSIBLE ===== */
+    details {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin: 12px 0;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    details:hover { border-color: #484f58; }
+    details[open] { border-color: var(--accent); }
+
+    details summary {
+      padding: 14px 18px;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text);
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+    }
+    details summary::-webkit-details-marker { display: none; }
+    details summary::before {
+      content: '▶';
+      font-size: 10px;
+      color: var(--text-muted);
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+    details[open] summary::before { transform: rotate(90deg); color: var(--accent); }
+
+    .details-content {
+      padding: 0 18px 18px;
+      border-top: 1px solid var(--border);
+    }
+    .details-content > *:first-child { margin-top: 14px; }
+
+    /* ===== FOLDER TREE ===== */
+    .folder-tree {
+      background: var(--bg-code);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 13px;
+      line-height: 1.9;
+      color: #e6edf3;
+      margin: 16px 0;
+      overflow-x: auto;
+    }
+    .folder-tree .dir  { color: #79c0ff; }
+    .folder-tree .file { color: #a5d6ff; }
+    .folder-tree .note { color: #8b949e; }
+
+    /* ===== LAYOUT CARDS ===== */
+    .layout-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .layout-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+    .layout-card .lc-name { font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 4px; }
+    .layout-card .lc-badge {
+      display: inline-block;
+      font-size: 10px;
+      background: var(--accent-glow);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+      padding: 1px 6px;
+      margin-bottom: 8px;
+    }
+    .layout-card .lc-desc { font-size: 12px; color: var(--text-muted); }
+
+    /* ===== THEME CHIPS ===== */
+    .theme-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .theme-chip {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .theme-chip .tc-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .theme-chip .tc-desc { font-size: 12px; color: var(--text-muted); }
+
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center;
+      padding: 40px 0 24px;
+      color: var(--text-muted);
+      font-size: 13px;
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+    }
+    footer strong { color: var(--text); }
+
+    /* ===== ALIASES BADGE ===== */
+    .alias-badge {
+      display: inline-block;
+      background: var(--bg-code);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 7px;
+      font-size: 12px;
+      font-family: monospace;
+      color: var(--text-muted);
+      margin: 0 3px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1200px) {
+      .toc-sidebar { display: none; }
+      .content-wrapper { margin-right: 0; }
+    }
+
+    @media (max-width: 768px) {
+      .hamburger { display: flex; }
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+        box-shadow: 4px 0 32px rgba(0,0,0,0.5);
+      }
+      .sidebar-overlay.open { display: block; }
+      .content-wrapper {
+        margin-left: 0;
+        padding: 32px 20px;
+      }
+      .topbar-left { width: auto; }
+      .topbar-search { display: none; }
+      .topbar-nav { display: none; }
+      h1 { font-size: 1.75rem; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .layout-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 480px) {
+      .layout-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ===== SEARCH HIGHLIGHT ===== */
+    .search-highlight { background: rgba(59,130,246,0.25); border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+<!-- ===== TOP NAVIGATION BAR ===== -->
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+    <a href="#" class="logo-title">🎨 <span>WardrobePanel</span></a>
+  </div>
+  <nav class="topbar-nav">
+    <a href="#features" class="active">Documentation</a>
+    <a href="https://discord.gg/SG8jvb9WU5" target="_blank" rel="noopener">Support</a>
+  </nav>
+  <div class="topbar-search">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input type="text" id="searchInput" placeholder="Search documentation…" autocomplete="off" />
+  </div>
+</header>
+
+<!-- ===== SIDEBAR OVERLAY (mobile) ===== -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- ===== LEFT SIDEBAR ===== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-section-label">Getting Started</div>
+  <nav>
+    <a href="#features" data-section="features">✨ Features</a>
+    <a href="#requirements" data-section="requirements">📦 Requirements</a>
+    <a href="#quick-setup" data-section="quick-setup">🚀 Quick Setup</a>
+  </nav>
+
+  <div class="sidebar-section-label">Configuration</div>
+  <nav>
+    <a href="#config-guide" data-section="config-guide">⚙️ Configuration Guide</a>
+    <a href="#commands" data-section="commands">💬 Commands</a>
+    <a href="#permissions" data-section="permissions">🔑 Permissions</a>
+    <a href="#placeholderapi" data-section="placeholderapi">📊 PlaceholderAPI</a>
+  </nav>
+
+  <div class="sidebar-section-label">Customisation</div>
+  <nav>
+    <a href="#layouts" data-section="layouts">📐 Website Layouts</a>
+    <a href="#themes" data-section="themes">🎨 Themes</a>
+    <a href="#assets" data-section="assets">🖼️ Customising Assets</a>
+    <a href="#overlays" data-section="overlays">👕 Overlays &amp; Skins</a>
+  </nav>
+
+  <div class="sidebar-section-label">Advanced</div>
+  <nav>
+    <a href="#profiles" data-section="profiles">👤 Profiles &amp; Outfits</a>
+    <a href="#owned-items" data-section="owned-items">🛒 Owned Items System</a>
+    <a href="#permission-filtering" data-section="permission-filtering">🔐 Permission Filtering</a>
+  </nav>
+
+  <div class="sidebar-section-label">Help</div>
+  <nav>
+    <a href="#troubleshooting" data-section="troubleshooting">🔧 Troubleshooting</a>
+    <a href="#support" data-section="support">💬 Support</a>
+  </nav>
+</aside>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="layout">
+  <div class="content-wrapper" id="mainContent">
+
+    <!-- Hero -->
+    <div class="section-label">Getting Started</div>
+    <div class="hero-badges">
+      <img src="https://img.shields.io/badge/Version-1.3.1-blue?style=for-the-badge" alt="Version">
+      <img src="https://img.shields.io/badge/MC-1.21+-green?style=for-the-badge" alt="Minecraft">
+      <img src="https://img.shields.io/badge/Java-21+-orange?style=for-the-badge" alt="Java">
+      <img src="https://img.shields.io/badge/Paper-Supported-blueviolet?style=for-the-badge" alt="Paper">
+    </div>
+    <h1>🎨 WardrobePanel</h1>
+    <p class="hero-description">
+      A premium Minecraft plugin that lets players customise their skin through a web-based character editor.
+      Players mix and match base skins, hairstyles, eye colours, clothing, accessories, and more — all rendered
+      live in a 3D viewer, then applied to their in-game skin automatically.
+    </p>
+
+    <!-- ===== FEATURES ===== -->
+    <section class="doc-section" id="features">
+      <h2>✨ Features</h2>
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-icon">🌐</div>
+          <div class="card-title">Web-Based Character Editor</div>
+          <div class="card-desc">Players open a link in their browser — no mods needed</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🧍</div>
+          <div class="card-title">Live 3D Preview</div>
+          <div class="card-desc">Powered by skinview3d with idle animation &amp; zoom</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">👕</div>
+          <div class="card-title">Layered Overlay System</div>
+          <div class="card-desc">Hair, eyes, shirts, pants, jackets, shoes, accessories, beards, markings</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🎨</div>
+          <div class="card-title">Full Colour Customisation</div>
+          <div class="card-desc">Skin tone palettes, eye colour, hair colour, per-item clothing colours with sliders</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">👤</div>
+          <div class="card-title">Multiple Profiles</div>
+          <div class="card-desc">Each player can have up to N configurable character profiles</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">💾</div>
+          <div class="card-title">Saved Outfits</div>
+          <div class="card-desc">Name and save multiple outfit presets per profile, load via sidebar or commands</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔐</div>
+          <div class="card-title">Permission-Based Items</div>
+          <div class="card-desc">Control which items players can see/use per category or individually</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🛒</div>
+          <div class="card-title">Owned Items System</div>
+          <div class="card-desc">Give/revoke items per player for shop integration</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🏷️</div>
+          <div class="card-title">PlaceholderAPI</div>
+          <div class="card-desc">25+ placeholders for scoreboards, holograms, NPCs, and more</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🎭</div>
+          <div class="card-title">12 Colour Themes</div>
+          <div class="card-desc">Dark charcoal, midnight, ocean, forest, sunset, cherry, nether, end, royal, steampunk, pastel, arctic</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">📐</div>
+          <div class="card-title">6 Website Layouts</div>
+          <div class="card-desc">Classic, centered, compact, stacked, theater, minimal</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">⌨️</div>
+          <div class="card-title">Full Command Suite</div>
+          <div class="card-desc">editor, load, loadfor, create, delete, rename, copy, setskin, resetskin, give, revoke, and more</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== REQUIREMENTS ===== -->
+    <section class="doc-section" id="requirements">
+      <h2>📦 Requirements</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Requirement</th>
+              <th>Version / Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Minecraft Server</td><td><strong>Paper/Purpur 1.21+</strong></td></tr>
+            <tr><td>Java</td><td><strong>21+</strong></td></tr>
+            <tr><td>MineSkin API Key</td><td>Free at <a href="https://mineskin.org/apikey" target="_blank" rel="noopener">mineskin.org/apikey</a></td></tr>
+            <tr><td>SkinsRestorer</td><td><strong>Recommended</strong> (for skin application)</td></tr>
+            <tr><td>PlaceholderAPI</td><td><strong>Optional</strong> (for placeholders)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== QUICK SETUP ===== -->
+    <section class="doc-section" id="quick-setup">
+      <h2>🚀 Quick Setup</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Install the Plugin</div>
+            <div class="step-body">
+              <ul>
+                <li>Drop <code>WardrobePanel-V1.3.1.jar</code> into your server's <code>plugins/</code> folder</li>
+                <li>Start your server once — the plugin will generate its config files and <code>web/</code> folder</li>
+                <li>Stop the server</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Configure <code>config.yml</code></div>
+            <div class="step-body">
+              <p>Open <code>plugins/WardrobePanel/config.yml</code> and set these critical values:</p>
+              <div class="pre-wrapper">
+                <button class="copy-btn" aria-label="Copy code">Copy</button>
+<pre><code><span class="yaml-key">web</span>:
+  <span class="yaml-key">host</span>: <span class="yaml-str">"0.0.0.0"</span>           <span class="yaml-comment"># ← ALWAYS leave this as 0.0.0.0</span>
+  <span class="yaml-key">port</span>: <span class="yaml-num">50424</span>                <span class="yaml-comment"># ← Pick an open port</span>
+  <span class="yaml-key">public-url</span>: <span class="yaml-str">"http://YOUR_SERVER_IP:50424"</span>  <span class="yaml-comment"># ← Your real IP goes here!</span>
+  <span class="yaml-key">theme</span>: <span class="yaml-str">"default"</span>           <span class="yaml-comment"># ← Any of the 12 themes</span>
+  <span class="yaml-key">layout</span>: <span class="yaml-str">"classic"</span>          <span class="yaml-comment"># ← Any of the 6 layouts</span>
+
+<span class="yaml-key">mineskin</span>:
+  <span class="yaml-key">api-key</span>: <span class="yaml-str">"YOUR_MINESKIN_API_KEY"</span>  <span class="yaml-comment"># ← Get from mineskin.org/apikey</span></code></pre>
+              </div>
+              <div class="callout callout-warn">
+                <span class="callout-icon">⚠️</span>
+                <div class="callout-body"><strong>Critical:</strong> <code>host</code> must be <code>0.0.0.0</code>. Your public IP goes in <code>public-url</code> only!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Install the Setup Files</div>
+            <div class="step-body">
+              <ul>
+                <li>Unzip <strong><code>setup.zip</code></strong> — this contains the <code>overlays/</code> and <code>skins/</code> folders, this should go directly into the plugin folder</li>
+                <li>Copy the extracted <code>web/</code> folder contents into <code>plugins/WardrobePanel/web/</code> (merge with existing)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">Install the Assets</div>
+            <div class="step-body">
+              <ul>
+                <li>Unzip <strong><code>assets.zip</code></strong> — this contains icons, backgrounds, cursors, fonts; this goes into the web folder inside the plugin folder</li>
+                <li>Copy the <code>assets/</code> folder into <code>plugins/WardrobePanel/web/</code> (merge with existing <code>assets/</code>)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <div class="step-title">Choose Your Layout</div>
+            <div class="step-body">
+              <ul>
+                <li>Unzip <strong><code>layouts.zip</code></strong> to see all 6 layout options</li>
+                <li>Copy <code>index.html</code> and <code>style.css</code> from your chosen layout folder into <code>plugins/WardrobePanel/web/</code></li>
+                <li>Or simply set <code>web.layout: "theater"</code> (or any layout name) in <code>config.yml</code></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">6</div>
+          <div class="step-content">
+            <div class="step-title">Open the Port</div>
+            <div class="step-body">
+              <p>Make sure the port you chose (e.g. <code>50424</code>) is open in your hosting firewall.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">7</div>
+          <div class="step-content">
+            <div class="step-title">Start &amp; Test</div>
+            <div class="step-body">
+              <ul>
+                <li>Start the server</li>
+                <li>Run <code>/webchar editor</code> in-game — you'll receive a clickable link</li>
+                <li>Open the link in your browser — the character editor should load</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CONFIGURATION GUIDE ===== -->
+    <section class="doc-section" id="config-guide">
+      <h2>⚙️ Configuration Guide</h2>
+      <h3><code>config.yml</code> — Full Breakdown</h3>
+
+      <details>
+        <summary>Web Server Settings</summary>
+        <div class="details-content">
+          <div class="pre-wrapper">
+            <button class="copy-btn" aria-label="Copy code">Copy</button>
+<pre><code><span class="yaml-key">web</span>:
+  <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">port</span>: <span class="yaml-num">50424</span>
+  <span class="yaml-key">host</span>: <span class="yaml-str">"0.0.0.0"</span>       <span class="yaml-comment"># ALWAYS 0.0.0.0 — binds to all interfaces</span>
+  <span class="yaml-key">public-url</span>: <span class="yaml-str">"http://YOUR_IP:50424"</span>
+  <span class="yaml-key">theme</span>: <span class="yaml-str">"default"</span>       <span class="yaml-comment"># See Themes section</span>
+  <span class="yaml-key">layout</span>: <span class="yaml-str">"classic"</span>      <span class="yaml-comment"># See Layouts section</span></code></pre>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Key</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td><code>enabled</code></td><td>Enable/disable the web server</td></tr>
+                <tr><td><code>port</code></td><td>Port to listen on — make sure it's open in your firewall</td></tr>
+                <tr><td><code>host</code></td><td><strong>Always <code>0.0.0.0</code></strong> — do NOT put your IP here</td></tr>
+                <tr><td><code>public-url</code></td><td>The URL players use to access the editor. Must include <code>http://</code></td></tr>
+                <tr><td><code>theme</code></td><td>Colour theme for the website</td></tr>
+                <tr><td><code>layout</code></td><td>Website layout template</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Profile Settings</summary>
+        <div class="details-content">
+          <div class="pre-wrapper">
+            <button class="copy-btn" aria-label="Copy code">Copy</button>
+<pre><code><span class="yaml-key">profiles</span>:
+  <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">max-per-player</span>: <span class="yaml-num">5</span></code></pre>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Feature Toggles</summary>
+        <div class="details-content">
+          <div class="pre-wrapper">
+            <button class="copy-btn" aria-label="Copy code">Copy</button>
+<pre><code><span class="yaml-key">features</span>:
+  <span class="yaml-key">skin-change</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">skin-colour</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">eye-colour</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">eye-style</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">hair-colour</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">hair-style</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">beard-style</span>: <span class="yaml-bool">true</span></code></pre>
+          </div>
+          <p>Disable any feature to hide it from the web editor.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Skin Application</summary>
+        <div class="details-content">
+          <div class="pre-wrapper">
+            <button class="copy-btn" aria-label="Copy code">Copy</button>
+<pre><code><span class="yaml-key">skin-apply</span>:
+  <span class="yaml-key">auto-apply</span>: <span class="yaml-bool">true</span>       <span class="yaml-comment"># Apply skin when player saves in wardrobe</span>
+  <span class="yaml-key">apply-on-join</span>: <span class="yaml-bool">true</span>    <span class="yaml-comment"># Apply saved skin on player join</span>
+  <span class="yaml-key">apply-message</span>: <span class="yaml-str">"&amp;aYour custom skin has been applied!"</span>
+  <span class="yaml-key">apply-failed</span>: <span class="yaml-str">"&amp;cFailed to apply skin. Please try again later."</span></code></pre>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Session &amp; Cooldown</summary>
+        <div class="details-content">
+          <div class="pre-wrapper">
+            <button class="copy-btn" aria-label="Copy code">Copy</button>
+<pre><code><span class="yaml-key">session</span>:
+  <span class="yaml-key">expiry-minutes</span>: <span class="yaml-num">1440</span>   <span class="yaml-comment"># 24 hours</span>
+  <span class="yaml-key">max-per-player</span>: <span class="yaml-num">1</span>
+
+<span class="yaml-key">cooldown</span>:
+  <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">seconds</span>: <span class="yaml-num">30</span></code></pre>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Messages</summary>
+        <div class="details-content">
+          <p>All messages support <code>&amp;</code> colour codes:</p>
+          <div class="pre-wrapper">
+            <button class="copy-btn" aria-label="Copy code">Copy</button>
+<pre><code><span class="yaml-key">messages</span>:
+  <span class="yaml-key">prefix</span>: <span class="yaml-str">"&amp;8[&amp;6WebChar&amp;8] "</span>
+  <span class="yaml-key">link-message</span>: <span class="yaml-str">"&amp;aClick here to open your character editor: &amp;n%link%"</span>
+  <span class="yaml-key">link-hover</span>: <span class="yaml-str">"&amp;7Click to open the character creator"</span>
+  <span class="yaml-key">session-created</span>: <span class="yaml-str">"&amp;aYour character editor link has been created!"</span>
+  <span class="yaml-key">session-expired</span>: <span class="yaml-str">"&amp;cYour session has expired. Use /webchar editor for a new link."</span>
+  <span class="yaml-key">no-permission</span>: <span class="yaml-str">"&amp;cYou don't have permission to do that."</span>
+  <span class="yaml-key">reload-success</span>: <span class="yaml-str">"&amp;aConfiguration reloaded! Overlays rescanned."</span>
+  <span class="yaml-key">server-not-running</span>: <span class="yaml-str">"&amp;cThe web server is not running. Contact an administrator."</span>
+  <span class="yaml-key">cooldown-message</span>: <span class="yaml-str">"&amp;cPlease wait %time% before requesting a new link."</span></code></pre>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- ===== COMMANDS ===== -->
+    <section class="doc-section" id="commands">
+      <h2>💬 Commands</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Command</th>
+              <th>Description</th>
+              <th>Permission</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>/webchar</code></td><td>Open editor for default profile</td><td><code>webchar.use</code></td></tr>
+            <tr><td><code>/webchar editor [profile]</code></td><td>Open editor for a specific profile</td><td><code>webchar.use</code></td></tr>
+            <tr><td><code>/webchar create &lt;name&gt;</code></td><td>Create a new character profile</td><td><code>webchar.use</code></td></tr>
+            <tr><td><code>/webchar delete &lt;name&gt;</code></td><td>Delete a character profile</td><td><code>webchar.use</code></td></tr>
+            <tr><td><code>/webchar list</code></td><td>List all your profiles</td><td><code>webchar.use</code></td></tr>
+            <tr><td><code>/webchar load &lt;profile&gt;</code></td><td>Load/apply a profile's skin in-game</td><td><code>webchar.use</code></td></tr>
+            <tr><td><code>/webchar apply &lt;profile&gt;</code></td><td>Alias for <code>load</code></td><td><code>webchar.use</code></td></tr>
+            <tr><td><code>/webchar rename &lt;old&gt; &lt;new&gt;</code></td><td>Rename a profile</td><td><code>webchar.use</code></td></tr>
+            <tr><td><code>/webchar copy &lt;source&gt; &lt;new&gt;</code></td><td>Duplicate a profile</td><td><code>webchar.use</code></td></tr>
+            <tr><td><code>/webchar setskin &lt;profile&gt;</code></td><td>Set a profile as your active skin</td><td><code>webchar.use</code></td></tr>
+            <tr><td><code>/webchar resetskin</code></td><td>Reset to your original Minecraft skin</td><td><code>webchar.use</code></td></tr>
+            <tr><td><code>/webchar loadfor &lt;player&gt; &lt;profile&gt;</code></td><td>Apply another player's profile to them</td><td><code>webchar.admin</code></td></tr>
+            <tr><td><code>/webchar link &lt;player&gt; [profile]</code></td><td>Generate editor link for another player</td><td><code>webchar.link.others</code></td></tr>
+            <tr><td><code>/webchar give &lt;player&gt; &lt;type&gt; &lt;id&gt;</code></td><td>Give an owned item to a player</td><td><code>webchar.admin</code></td></tr>
+            <tr><td><code>/webchar revoke &lt;player&gt; &lt;type&gt; &lt;id&gt;</code></td><td>Revoke an owned item</td><td><code>webchar.admin</code></td></tr>
+            <tr><td><code>/webchar reload</code></td><td>Reload config and rescan overlays</td><td><code>webchar.reload</code></td></tr>
+            <tr><td><code>/webchar status</code></td><td>Show plugin &amp; web server status</td><td><code>webchar.admin</code></td></tr>
+            <tr><td><code>/webchar sessions</code></td><td>List all active sessions</td><td><code>webchar.admin</code></td></tr>
+            <tr><td><code>/webchar help</code></td><td>Show command help</td><td><code>webchar.use</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Aliases:</strong> <span class="alias-badge">/wc</span> <span class="alias-badge">/character</span></p>
+    </section>
+
+    <!-- ===== PERMISSIONS ===== -->
+    <section class="doc-section" id="permissions">
+      <h2>🔑 Permissions</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Permission</th>
+              <th>Description</th>
+              <th>Default</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>webchar.use</code></td><td>Use the character editor and basic commands</td><td><code>true</code></td></tr>
+            <tr><td><code>webchar.admin</code></td><td>Admin commands: loadfor, give, revoke, status, sessions</td><td><code>op</code></td></tr>
+            <tr><td><code>webchar.reload</code></td><td>Reload plugin configuration</td><td><code>op</code></td></tr>
+            <tr><td><code>webchar.link.others</code></td><td>Generate editor links for other players</td><td><code>op</code></td></tr>
+            <tr><td><code>wardrobepanel.bypass</code></td><td>Bypass all permission filtering (see all items)</td><td>—</td></tr>
+            <tr><td><code>wardrobepanel.skin.&lt;id&gt;</code></td><td>Access a specific base skin</td><td>—</td></tr>
+            <tr><td><code>wardrobepanel.overlay.&lt;category&gt;.&lt;id&gt;</code></td><td>Access a specific overlay</td><td>—</td></tr>
+            <tr><td><code>wardrobepanel.overlay.&lt;category&gt;.*</code></td><td>Access all overlays in a category</td><td>—</td></tr>
+            <tr><td><code>wardrobepanel.overlay.*</code></td><td>Access all overlays</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== PLACEHOLDERAPI ===== -->
+    <section class="doc-section" id="placeholderapi">
+      <h2>📊 PlaceholderAPI</h2>
+      <div class="callout callout-info">
+        <span class="callout-icon">ℹ️</span>
+        <div class="callout-body">Requires <a href="https://www.spigotmc.org/resources/placeholderapi.6245/" target="_blank" rel="noopener">PlaceholderAPI</a></div>
+      </div>
+      <p>All placeholders use the prefix <code>%wardrobepanel_&lt;placeholder&gt;%</code></p>
+
+      <h3>Profile Placeholders</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Placeholder</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>%wardrobepanel_profile_count%</code></td><td>Number of profiles the player has</td></tr>
+            <tr><td><code>%wardrobepanel_profile_current%</code></td><td>Currently active profile name</td></tr>
+            <tr><td><code>%wardrobepanel_profile_list%</code></td><td>Comma-separated list of all profile names</td></tr>
+            <tr><td><code>%wardrobepanel_profile_max%</code></td><td>Maximum profiles allowed (from config)</td></tr>
+            <tr><td><code>%wardrobepanel_profile_name_0%</code></td><td>Profile name by index (0, 1, 2…)</td></tr>
+            <tr><td><code>%wardrobepanel_last_profile%</code></td><td>Last used profile name</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Outfit Placeholders</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Placeholder</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>%wardrobepanel_outfit_skin%</code></td><td>Current base skin ID</td></tr>
+            <tr><td><code>%wardrobepanel_outfit_skin_color%</code></td><td>Current skin palette</td></tr>
+            <tr><td><code>%wardrobepanel_outfit_hair%</code></td><td>Current hairstyle overlay ID</td></tr>
+            <tr><td><code>%wardrobepanel_outfit_hair_color%</code></td><td>Current hair colour palette</td></tr>
+            <tr><td><code>%wardrobepanel_outfit_eye%</code></td><td>Current eye overlay ID</td></tr>
+            <tr><td><code>%wardrobepanel_outfit_eye_color%</code></td><td>Current eye colour palette</td></tr>
+            <tr><td><code>%wardrobepanel_outfit_shirt%</code></td><td>Current shirt overlay ID</td></tr>
+            <tr><td><code>%wardrobepanel_outfit_pants%</code></td><td>Current pants overlay ID</td></tr>
+            <tr><td><code>%wardrobepanel_outfit_shoes%</code></td><td>Current shoes overlay ID</td></tr>
+            <tr><td><code>%wardrobepanel_outfit_jacket%</code></td><td>Current jacket overlay ID</td></tr>
+            <tr><td><code>%wardrobepanel_outfit_accessory%</code></td><td>Current accessory overlay ID</td></tr>
+            <tr><td><code>%wardrobepanel_outfit_beard%</code></td><td>Current beard overlay ID</td></tr>
+            <tr><td><code>%wardrobepanel_outfit_marking%</code></td><td>Current marking overlay ID</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Web &amp; Session Placeholders</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Placeholder</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>%wardrobepanel_web_url%</code></td><td>Public URL of the web editor</td></tr>
+            <tr><td><code>%wardrobepanel_skin_url%</code></td><td>URL to the player's saved skin image</td></tr>
+            <tr><td><code>%wardrobepanel_theme%</code></td><td>Current theme name</td></tr>
+            <tr><td><code>%wardrobepanel_session_active%</code></td><td><code>true</code>/<code>false</code> if player has active session</td></tr>
+            <tr><td><code>%wardrobepanel_session_expires%</code></td><td>Minutes until session expires</td></tr>
+            <tr><td><code>%wardrobepanel_cooldown_remaining%</code></td><td>Seconds left on link cooldown</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Ownership &amp; Stats Placeholders</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Placeholder</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>%wardrobepanel_owned_count%</code></td><td>Total number of owned items</td></tr>
+            <tr><td><code>%wardrobepanel_owned_&lt;category&gt;%</code></td><td>Number of owned items in a category</td></tr>
+            <tr><td><code>%wardrobepanel_owns_all%</code></td><td><code>true</code>/<code>false</code> if player owns everything</td></tr>
+            <tr><td><code>%wardrobepanel_total_skins_applied%</code></td><td>Total skin applications by this player</td></tr>
+            <tr><td><code>%wardrobepanel_last_skin_change%</code></td><td>Timestamp of last skin change</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== WEBSITE LAYOUTS ===== -->
+    <section class="doc-section" id="layouts">
+      <h2>📐 Website Layouts</h2>
+      <p>WardrobePanel ships with <strong>6 different website layouts</strong>. Switch between them easily.</p>
+
+      <div class="layout-grid">
+        <div class="layout-card">
+          <div class="lc-name">classic</div>
+          <div class="lc-badge">⭐ Default</div>
+          <div class="lc-desc">3-column: Left sidebar | Center viewer | Right panel</div>
+        </div>
+        <div class="layout-card">
+          <div class="lc-name">centered</div>
+          <div class="lc-desc">Full-screen viewer with floating glassmorphism panels</div>
+        </div>
+        <div class="layout-card">
+          <div class="lc-name">compact</div>
+          <div class="lc-desc">Slim top bar + two-column (Viewer | Panel)</div>
+        </div>
+        <div class="layout-card">
+          <div class="lc-name">stacked</div>
+          <div class="lc-desc">Thin sidebar + vertical split (viewer top, panel bottom)</div>
+        </div>
+        <div class="layout-card">
+          <div class="lc-name">theater</div>
+          <div class="lc-desc">Full-screen viewer with slide-out drawer panels</div>
+        </div>
+        <div class="layout-card">
+          <div class="lc-name">minimal</div>
+          <div class="lc-desc">Full viewer + bottom bar + slide-out customiser</div>
+        </div>
+      </div>
+
+      <h3>Switching Layouts</h3>
+      <p><strong>Method 1 — Via config.yml (recommended):</strong></p>
+      <div class="pre-wrapper">
+        <button class="copy-btn" aria-label="Copy code">Copy</button>
+<pre><code><span class="yaml-key">web</span>:
+  <span class="yaml-key">layout</span>: <span class="yaml-str">"theater"</span>    <span class="yaml-comment"># classic, centered, compact, stacked, theater, minimal</span></code></pre>
+      </div>
+      <p>Then run <code>/webchar reload</code></p>
+
+      <p><strong>Method 2 — Manual copy:</strong></p>
+      <ol>
+        <li>Navigate to <code>plugins/WardrobePanel/web/layouts/</code></li>
+        <li>Open your chosen layout folder (e.g. <code>layout-theater/</code>)</li>
+        <li>Copy <code>index.html</code> and <code>style.css</code> into <code>plugins/WardrobePanel/web/</code> (overwrite existing)</li>
+        <li>Set <code>layout: "custom"</code> in config.yml to prevent overwrite on reload</li>
+        <li>Run <code>/webchar reload</code></li>
+      </ol>
+
+      <p><strong>Method 3 — Linux command:</strong></p>
+      <div class="pre-wrapper">
+        <button class="copy-btn" aria-label="Copy code">Copy</button>
+<pre><code><span class="bash-cmd">cp</span> <span class="bash-path">plugins/WardrobePanel/web/layouts/layout-theater/index.html</span> <span class="bash-path">plugins/WardrobePanel/web/index.html</span>
+<span class="bash-cmd">cp</span> <span class="bash-path">plugins/WardrobePanel/web/layouts/layout-theater/style.css</span> <span class="bash-path">plugins/WardrobePanel/web/style.css</span></code></pre>
+      </div>
+    </section>
+
+    <!-- ===== THEMES ===== -->
+    <section class="doc-section" id="themes">
+      <h2>🎨 Themes</h2>
+      <p>Set your theme in <code>config.yml</code>:</p>
+      <div class="pre-wrapper">
+        <button class="copy-btn" aria-label="Copy code">Copy</button>
+<pre><code><span class="yaml-key">web</span>:
+  <span class="yaml-key">theme</span>: <span class="yaml-str">"midnight"</span></code></pre>
+      </div>
+
+      <div class="theme-list">
+        <div class="theme-chip"><span class="tc-dot" style="background:#4a4a52"></span><strong>default</strong><span class="tc-desc">Dark charcoal + teal accents</span></div>
+        <div class="theme-chip"><span class="tc-dot" style="background:#1a2050"></span><strong>midnight</strong><span class="tc-desc">Deep navy blue</span></div>
+        <div class="theme-chip"><span class="tc-dot" style="background:#0a3d62"></span><strong>ocean</strong><span class="tc-desc">Ocean blue tones</span></div>
+        <div class="theme-chip"><span class="tc-dot" style="background:#1a3a1a"></span><strong>forest</strong><span class="tc-desc">Dark green woodland</span></div>
+        <div class="theme-chip"><span class="tc-dot" style="background:#7c3300"></span><strong>sunset</strong><span class="tc-desc">Warm amber and orange</span></div>
+        <div class="theme-chip"><span class="tc-dot" style="background:#5c0030"></span><strong>cherry</strong><span class="tc-desc">Deep magenta / cherry blossom</span></div>
+        <div class="theme-chip"><span class="tc-dot" style="background:#5c0000"></span><strong>nether</strong><span class="tc-desc">Fiery red and dark crimson</span></div>
+        <div class="theme-chip"><span class="tc-dot" style="background:#1a0033"></span><strong>end</strong><span class="tc-desc">Purple and dark void</span></div>
+        <div class="theme-chip"><span class="tc-dot" style="background:#2d0057"></span><strong>royal</strong><span class="tc-desc">Deep purple and gold</span></div>
+        <div class="theme-chip"><span class="tc-dot" style="background:#3a2000"></span><strong>steampunk</strong><span class="tc-desc">Bronze and copper tones</span></div>
+        <div class="theme-chip"><span class="tc-dot" style="background:#ffb3c1"></span><strong>pastel</strong><span class="tc-desc">Soft pastel colours</span></div>
+        <div class="theme-chip"><span class="tc-dot" style="background:#b0e0e6"></span><strong>arctic</strong><span class="tc-desc">Icy blue and white</span></div>
+      </div>
+      <p>Themes are applied globally — all 6 layouts support all 12 themes.</p>
+    </section>
+
+    <!-- ===== CUSTOMISING ASSETS ===== -->
+    <section class="doc-section" id="assets">
+      <h2>🖼️ Customising Website Assets</h2>
+      <p>You can swap out the visual assets without touching any code.</p>
+      <p>Navigate to <code>plugins/WardrobePanel/web/assets/</code> and replace these files:</p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Path</th>
+              <th>What it is</th>
+              <th>Size to keep</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>bg/bg.png</code></td><td>Background image for the editor</td><td>Any resolution</td></tr>
+            <tr><td><code>cursor/mouse.png</code></td><td>Default cursor</td><td>32×32 or similar</td></tr>
+            <tr><td><code>cursor/mouse_click.png</code></td><td>Cursor when clicking</td><td>32×32</td></tr>
+            <tr><td><code>cursor/mousedraghover.png</code></td><td>Cursor when hovering the 3D viewer</td><td>32×32</td></tr>
+            <tr><td><code>cursor/mouse_drag.png</code></td><td>Cursor when dragging the 3D viewer</td><td>32×32</td></tr>
+            <tr><td><code>font/minecraft.woff2</code></td><td>The font used throughout the UI</td><td><code>.woff2</code> format</td></tr>
+            <tr><td><code>icons/*.png</code></td><td>Category icons in the panel (eyes.png, hairs.png, shirts.png, etc.)</td><td>64×64 recommended</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body"><strong>Keep the same filenames and sizes</strong> — just replace the PNGs. After replacing, run <code>/webchar reload</code> or restart the server.</div>
+      </div>
+    </section>
+
+    <!-- ===== OVERLAYS & SKINS ===== -->
+    <section class="doc-section" id="overlays">
+      <h2>👕 Adding / Changing Overlays &amp; Skins</h2>
+
+      <h3>Folder Structure</h3>
+      <div class="folder-tree">
+<span class="dir">web/assets/</span>
+├── <span class="dir">overlays/</span>
+│   ├── <span class="dir">accessories/</span>     <span class="note">← Accessory overlays</span>
+│   ├── <span class="dir">beards/</span>          <span class="note">← Beard overlays</span>
+│   ├── <span class="dir">eyes/</span>            <span class="note">← Eye overlays</span>
+│   ├── <span class="dir">hairs/</span>           <span class="note">← Hair overlays</span>
+│   ├── <span class="dir">jackets/</span>         <span class="note">← Jacket overlays</span>
+│   ├── <span class="dir">markings/</span>        <span class="note">← Marking overlays</span>
+│   ├── <span class="dir">pants/</span>           <span class="note">← Pants overlays</span>
+│   ├── <span class="dir">shirts/</span>          <span class="note">← Shirt overlays</span>
+│   ├── <span class="dir">shoes/</span>           <span class="note">← Shoe overlays</span>
+│   └── <span class="dir">skin-colours/</span>    <span class="note">← Base skin PNG files</span>
+├── <span class="dir">skins/</span>               <span class="note">← Base skin files (used for preview rendering)</span>
+├── <span class="file">manifest.json</span>        <span class="note">← Auto-generated index of all overlays</span>
+└── <span class="file">catalog.json</span>         <span class="note">← Category definitions, palettes, colours</span>
+      </div>
+
+      <h3>Adding New Overlays</h3>
+      <ol>
+        <li>Create your overlay as a <strong>64×64 PNG</strong> (standard Minecraft skin format)</li>
+        <li>Only draw on the 2nd layer (overlay layer) of the skin template</li>
+        <li>Drop the PNG file into the appropriate category folder (e.g. <code>overlays/hairs/</code>)</li>
+        <li>Run <code>/webchar reload</code> in-game — the manifest is regenerated automatically</li>
+        <li>The new overlay will appear in the editor immediately</li>
+      </ol>
+
+      <h3>Changing Base Skins</h3>
+      <ol>
+        <li>Replace or add PNGs in <code>overlays/skin-colours/</code></li>
+        <li>Keep the naming convention: <code>base-steve-male.png</code>, <code>base-alex-female.png</code>, etc.</li>
+        <li>Run <code>/webchar reload</code></li>
+      </ol>
+
+      <div class="callout callout-warn">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body"><strong>Important:</strong> When the plugin reloads or starts, it auto-scans all overlay folders and regenerates <code>manifest.json</code>. You never need to edit manifest.json manually.</div>
+      </div>
+    </section>
+
+    <!-- ===== PROFILES & OUTFITS ===== -->
+    <section class="doc-section" id="profiles">
+      <h2>👤 Profiles &amp; Saved Outfits</h2>
+
+      <h3>Profiles</h3>
+      <p>Each player can have multiple character profiles (like RPG character slots):</p>
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-title">Create</div>
+          <div class="card-desc"><code>/webchar create MyWarrior</code></div>
+        </div>
+        <div class="card">
+          <div class="card-title">List</div>
+          <div class="card-desc"><code>/webchar list</code></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Edit</div>
+          <div class="card-desc"><code>/webchar editor MyWarrior</code> — opens the web editor for that profile</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Load / Apply</div>
+          <div class="card-desc"><code>/webchar load MyWarrior</code> — applies that profile's skin in-game</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Rename</div>
+          <div class="card-desc"><code>/webchar rename MyWarrior MyKnight</code></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Copy</div>
+          <div class="card-desc"><code>/webchar copy MyWarrior MyBackup</code></div>
+        </div>
+      </div>
+
+      <h3>Saved Outfits</h3>
+      <p>Within each profile, players can save multiple named outfits in the web editor:</p>
+      <ol>
+        <li>Customise your character in the editor</li>
+        <li>Click the <strong>+</strong> button in the sidebar</li>
+        <li>Enter a name for the outfit</li>
+        <li>The outfit appears in the sidebar — click to load it anytime</li>
+        <li>Hover and click <strong>✕</strong> to delete</li>
+      </ol>
+    </section>
+
+    <!-- ===== OWNED ITEMS SYSTEM ===== -->
+    <section class="doc-section" id="owned-items">
+      <h2>🛒 Owned Items System</h2>
+      <p>Enable a shop-like system where players must "own" items before they can use them:</p>
+
+      <div class="pre-wrapper">
+        <button class="copy-btn" aria-label="Copy code">Copy</button>
+<pre><code><span class="yaml-key">owned-items</span>:
+  <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">starter-categories</span>:
+    - <span class="yaml-str">"eyes"</span>               <span class="yaml-comment"># Everyone gets all eyes for free</span>
+  <span class="yaml-key">starter-overlays</span>: []     <span class="yaml-comment"># Specific free overlays: ["hairs/short_hair"]</span>
+  <span class="yaml-key">combine-with-permissions</span>: <span class="yaml-bool">true</span></code></pre>
+      </div>
+
+      <h3>Admin Commands</h3>
+      <div class="pre-wrapper">
+        <button class="copy-btn" aria-label="Copy code">Copy</button>
+<pre><code><span class="bash-cmd">/webchar give</span> &lt;player&gt; all                    — Give all items
+<span class="bash-cmd">/webchar give</span> &lt;player&gt; category &lt;name&gt;        — Give all items in a category
+<span class="bash-cmd">/webchar give</span> &lt;player&gt; overlay &lt;category/id&gt;  — Give a specific overlay
+
+<span class="bash-cmd">/webchar revoke</span> &lt;player&gt; all                  — Revoke all items
+<span class="bash-cmd">/webchar revoke</span> &lt;player&gt; category &lt;name&gt;      — Revoke items in a category
+<span class="bash-cmd">/webchar revoke</span> &lt;player&gt; overlay &lt;category/id&gt;— Revoke a specific overlay</code></pre>
+      </div>
+    </section>
+
+    <!-- ===== PERMISSION-BASED FILTERING ===== -->
+    <section class="doc-section" id="permission-filtering">
+      <h2>🔐 Permission-Based Filtering</h2>
+      <p>Control which items players can see in the editor:</p>
+
+      <div class="pre-wrapper">
+        <button class="copy-btn" aria-label="Copy code">Copy</button>
+<pre><code><span class="yaml-key">permissions</span>:
+  <span class="yaml-key">enabled</span>: <span class="yaml-bool">true</span>
+  <span class="yaml-key">default-allowed</span>: <span class="yaml-bool">true</span>    <span class="yaml-comment"># true = see everything unless denied</span>
+  <span class="yaml-key">bypass-permission</span>: <span class="yaml-str">"wardrobepanel.bypass"</span></code></pre>
+      </div>
+
+      <h3>Permission Nodes</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Pattern</th>
+              <th>Example</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><code>wardrobepanel.skin.&lt;id&gt;</code></td><td><code>wardrobepanel.skin.base-steve-male</code></td><td>Access to a specific base skin</td></tr>
+            <tr><td><code>wardrobepanel.overlay.&lt;cat&gt;.&lt;id&gt;</code></td><td><code>wardrobepanel.overlay.hairs.male-90s_Side_Part</code></td><td>Access to a specific overlay</td></tr>
+            <tr><td><code>wardrobepanel.overlay.&lt;cat&gt;.*</code></td><td><code>wardrobepanel.overlay.hairs.*</code></td><td>Access to all overlays in a category</td></tr>
+            <tr><td><code>wardrobepanel.overlay.*</code></td><td>—</td><td>Access to all overlays</td></tr>
+            <tr><td><code>wardrobepanel.bypass</code></td><td>—</td><td>See all items (bypass filtering)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== TROUBLESHOOTING ===== -->
+    <section class="doc-section" id="troubleshooting">
+      <h2>🔧 Troubleshooting</h2>
+
+      <h3>"ERR_CONNECTION_REFUSED" / Site can't be reached</h3>
+      <ul>
+        <li>✅ Make sure <code>host</code> is <code>"0.0.0.0"</code> in config.yml — NOT your IP</li>
+        <li>✅ Make sure the port is open in your hosting firewall</li>
+        <li>✅ Make sure <code>public-url</code> has <code>http://</code> prefix</li>
+        <li>✅ Check the console — look for <code>Web server started on 0.0.0.0:PORT</code></li>
+      </ul>
+
+      <h3>"BindException: Cannot assign requested address"</h3>
+      <p>You put your server IP in the <code>host</code> field. Change it to <code>"0.0.0.0"</code>.</p>
+
+      <h3>Skin not applying in-game</h3>
+      <ul>
+        <li>✅ Check your MineSkin API key is valid</li>
+        <li>✅ Make sure SkinsRestorer is installed</li>
+        <li>✅ Try <code>/webchar load &lt;profile&gt;</code> manually</li>
+        <li>✅ Check console for MineSkin API errors</li>
+      </ul>
+
+      <h3>Web editor loads but shows "Session invalid"</h3>
+      <ul>
+        <li>✅ Make sure <code>public-url</code> matches the URL you're visiting</li>
+        <li>✅ Use a fresh link from <code>/webchar editor</code></li>
+        <li>✅ Sessions expire after the configured time (default: 24h)</li>
+      </ul>
+
+      <h3>Overlays not showing after adding new files</h3>
+      <ul>
+        <li>✅ Run <code>/webchar reload</code> to regenerate the manifest</li>
+        <li>✅ Make sure overlays are 64×64 PNG files</li>
+        <li>✅ Check the overlay is in the correct category folder</li>
+      </ul>
+    </section>
+
+    <!-- ===== SUPPORT ===== -->
+    <section class="doc-section" id="support">
+      <h2>💬 Support</h2>
+      <div class="cards-grid">
+        <div class="card">
+          <div class="card-icon">💬</div>
+          <div class="card-title">Discord</div>
+          <div class="card-desc"><a href="https://discord.gg/SG8jvb9WU5" target="_blank" rel="noopener">discord.gg/SG8jvb9WU5</a> — fastest response, community support &amp; announcements</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">📚</div>
+          <div class="card-title">GitHub Wiki</div>
+          <div class="card-desc"><a href="https://github.com/Anonventions/WardrobePanel-Wiki-V2" target="_blank" rel="noopener">WardrobePanel-Wiki-V2</a> — this documentation repository</div>
+        </div>
+      </div>
+      <p style="color:var(--text-muted); margin-top: 16px;">Report bugs on the <a href="https://discord.gg/SG8jvb9WU5" target="_blank" rel="noopener">Discord</a> or <a href="https://github.com/Anonventions/WardrobePanel-Wiki-V2/issues" target="_blank" rel="noopener">GitHub Issues</a>.</p>
+    </section>
+
+    <footer>
+      <strong>Made by Anonventions</strong><br>
+      <sub>© 2025-2026 Anonventions. All rights reserved.</sub>
+    </footer>
+
+  </div><!-- /content-wrapper -->
+
+  <!-- ===== RIGHT SIDEBAR (TOC) ===== -->
+  <aside class="toc-sidebar" id="tocSidebar">
+    <div class="toc-title">On This Page</div>
+    <ul id="tocList"></ul>
+  </aside>
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  // ===== MOBILE SIDEBAR TOGGLE =====
+  const hamburger = document.getElementById('hamburgerBtn');
+  const sidebar   = document.getElementById('sidebar');
+  const overlay   = document.getElementById('sidebarOverlay');
+
+  function openSidebar()  { sidebar.classList.add('open'); overlay.classList.add('open'); }
+  function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('open'); }
+
+  hamburger.addEventListener('click', () => sidebar.classList.contains('open') ? closeSidebar() : openSidebar());
+  overlay.addEventListener('click', closeSidebar);
+
+  // ===== COPY BUTTONS =====
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const pre = btn.nextElementSibling;
+      const text = pre ? pre.innerText : '';
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      }).catch(() => {
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.cssText = 'position:fixed;opacity:0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+      });
+    });
+  });
+
+  // ===== BUILD RIGHT TOC =====
+  const sections = Array.from(document.querySelectorAll('.doc-section'));
+  const tocList  = document.getElementById('tocList');
+
+  sections.forEach(sec => {
+    const h2 = sec.querySelector('h2');
+    if (!h2) return;
+    const li = document.createElement('li');
+    const a  = document.createElement('a');
+    a.href = '#' + sec.id;
+    a.textContent = h2.textContent.trim();
+    a.dataset.target = sec.id;
+    li.appendChild(a);
+    tocList.appendChild(li);
+  });
+
+  // ===== SCROLL SPY =====
+  const allSections = document.querySelectorAll('.doc-section');
+  const tocLinks    = document.querySelectorAll('#tocList a');
+  const sidebarLinks = document.querySelectorAll('.sidebar nav a');
+
+  function onScroll() {
+    let current = '';
+    allSections.forEach(sec => {
+      const rect = sec.getBoundingClientRect();
+      if (rect.top <= 80) current = sec.id;
+    });
+
+    // Right TOC active
+    tocLinks.forEach(a => {
+      a.classList.toggle('active', a.dataset.target === current);
+    });
+
+    // Left sidebar active
+    sidebarLinks.forEach(a => {
+      a.classList.toggle('active', a.dataset.section === current);
+    });
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // ===== CLOSE SIDEBAR ON NAV CLICK (mobile) =====
+  sidebarLinks.forEach(a => {
+    a.addEventListener('click', () => {
+      if (window.innerWidth <= 768) closeSidebar();
+    });
+  });
+
+  // ===== SEARCH =====
+  const searchInput = document.getElementById('searchInput');
+  let searchTimeout;
+
+  searchInput.addEventListener('input', () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      const q = searchInput.value.trim().toLowerCase();
+
+      // Remove previous highlights
+      document.querySelectorAll('.search-highlight').forEach(el => {
+        el.outerHTML = el.textContent;
+      });
+
+      if (!q) return;
+
+      // Simple text-node highlighter within content-wrapper
+      const walker = document.createTreeWalker(
+        document.getElementById('mainContent'),
+        NodeFilter.SHOW_TEXT,
+        {
+          acceptNode(node) {
+            const p = node.parentElement;
+            if (!p) return NodeFilter.FILTER_REJECT;
+            const tag = p.tagName.toLowerCase();
+            if (['script','style','code','pre'].includes(tag)) return NodeFilter.FILTER_REJECT;
+            if (node.textContent.toLowerCase().includes(q)) return NodeFilter.FILTER_ACCEPT;
+            return NodeFilter.FILTER_REJECT;
+          }
+        }
+      );
+
+      const nodes = [];
+      let n;
+      while ((n = walker.nextNode())) nodes.push(n);
+
+      nodes.forEach(node => {
+        const text = node.textContent;
+        const idx  = text.toLowerCase().indexOf(q);
+        if (idx === -1) return;
+        const span = document.createElement('span');
+        span.innerHTML =
+          escHtml(text.slice(0, idx)) +
+          '<mark class="search-highlight">' + escHtml(text.slice(idx, idx + q.length)) + '</mark>' +
+          escHtml(text.slice(idx + q.length));
+        node.parentNode.replaceChild(span, node);
+      });
+    }, 250);
+  });
+
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+})();
+</script>
+</body>
+</html>
