@@ -1,570 +1,884 @@
-<p align="center">
-  <img src="https://img.shields.io/badge/Version-1.3.1-blue?style=for-the-badge" alt="Version">
-  <img src="https://img.shields.io/badge/MC-1.21+-green?style=for-the-badge" alt="Minecraft">
-  <img src="https://img.shields.io/badge/Java-21+-orange?style=for-the-badge" alt="Java">
-  <img src="https://img.shields.io/badge/Paper-Supported-blueviolet?style=for-the-badge" alt="Paper">
-</p>
+# Vanity
 
-# 🎨 WardrobePanel — Full Character Creator for Minecraft
+Vanity is a Paper/Purpur character creator plugin with a browser editor, store,
+closet, lore, profile switching, themed UI shells, and MineSkin application.
+Players open it with `/vanity`, build a look in the web UI, save outfits, buy
+items, and apply the final skin back in-game.
 
-**WardrobePanel** is a premium Minecraft plugin that lets players customise their skin through a web-based character editor. Players mix and match base skins, hairstyles, eye colours, clothing, accessories, and more — all rendered live in a 3D viewer, then applied to their in-game skin automatically.
+Current release: **1.9.2**
 
----
+## Updates in 1.9.2
 
-## 📋 Table of Contents
+- Refresh skins through Paper's public profile API. Skin changes no longer reset maximum health or briefly reduce a player's health.
+- Look up the original Mojang skin asynchronously when resetting a skin, so a network lookup does not block the server tick.
+- Update the setup and upgrade instructions for Paper 26.3 and Java 25.
 
-- [Features](#-features)
-- [Requirements](#-requirements)
-- [Quick Setup](#-quick-setup)
-- [Configuration Guide](#-configuration-guide)
-- [Commands](#-commands)
-- [Permissions](#-permissions)
-- [PlaceholderAPI](#-placeholderapi)
-- [Website Layouts](#-website-layouts)
-- [Themes](#-themes)
-- [Customising Assets](#-customising-website-assets)
-- [Adding / Changing Overlays & Skins](#-adding--changing-overlays--skins)
-- [Profiles & Saved Outfits](#-profiles--saved-outfits)
-- [Owned Items System](#-owned-items-system)
-- [Permission-Based Filtering](#-permission-based-filtering)
-- [Troubleshooting](#-troubleshooting)
-- [Support](#-support)
+## Updates In 1.9.1
 
----
+- Fixed the intermittent `Failed to fetch dynamically imported module:
+  /js/ui/toolbar.js` error that could leave a selected character on the loading
+  screen.
+- Changed editor startup to load its viewer, creator panel, and toolbar in a
+  controlled sequence with three bounded, cache-busted recovery attempts.
+  Rejected startup state is cleared so reopening a character can recover instead
+  of permanently reusing the first failed request.
+- Reduced the toolbar's initial dependency graph. Settings, store, closet, lore,
+  inventory, and Overlay Library modules now load only when their controls are
+  opened, with the same bounded retry behavior.
+- Made bundled web-file extraction atomic, preventing a failed write or server
+  interruption from leaving a zero-byte or partially written JavaScript file.
+- Added a packaged-resource fallback to the embedded web server. If an extracted
+  core web asset is missing, empty, or temporarily unreadable, Vanity serves the
+  verified copy inside the JAR instead of returning a startup-breaking 404.
+- Added a browser regression that deliberately fails the first toolbar request
+  and verifies that the complete editor still opens successfully.
 
-## ✨ Features
+## Updates In 1.9.0
 
-- 🌐 **Web-Based Character Editor** — players open a link in their browser, no mods needed
-- 🧍 **Live 3D Preview** — powered by skinview3d with idle animation & zoom
-- 👕 **Layered Overlay System** — hair, eyes, shirts, pants, jackets, shoes, accessories, beards, markings
-- 🎨 **Full Colour Customisation** — skin tone palettes, eye colour, hair colour, per-item clothing colours with darkness/saturation/contrast sliders
-- 👤 **Multiple Profiles** — each player can have up to N character profiles (configurable)
-- 💾 **Saved Outfits** — name and save multiple outfit presets per profile, load them from sidebar or via commands
-- 🔐 **Permission-Based Items** — control which items players can see/use per category or individually
-- 🛒 **Owned Items System** — give/revoke items per player for shop integration
-- 🏷️ **PlaceholderAPI** — 25+ placeholders for scoreboards, holograms, NPCs, etc.
-- 🎭 **12 Colour Themes** — dark charcoal, midnight, ocean, forest, sunset, cherry, nether, end, royal, steampunk, pastel, arctic
-- 📐 **6 Website Layouts** — classic, centered, compact, stacked, theater, minimal
-- 🔄 **Auto Skin Apply** — skins are applied automatically when saved, and on join
-- ⌨️ **Full Command Suite** — editor, load, loadfor, create, delete, rename, copy, setskin, resetskin, give, revoke, and more
-- 🖼️ **Customisable Assets** — swap background, cursor, icons, and fonts easily
+- Added **68 complete character-creator presets** to the administrator panel.
+  Each curated option pairs a visual theme, a materially different workspace
+  structure, and a matching loading animation; admins can search the library or
+  fine-tune the three layers independently.
+- Added a dedicated loading-screen studio with **16 animation systems**: orbit,
+  dual orbit, brand progress, crafting blocks, pulse beacon, character scanner,
+  wardrobe doors, mannequin, pixel rain, constellation, rune, tailor stitch,
+  outfit carousel, portal, colour wave, and logo reveal.
+- Made loading-screen branding fully configurable from the browser: title,
+  caption, scale, background colour, primary colour, secondary colour, caption
+  visibility, and live-status visibility all have an immediate preview.
+- Published theme, layout, preset, and loading-screen changes now persist to
+  `config.yml` and propagate to connected editors through the live-update
+  stream without requiring a website refresh.
+- Fixed the shared panel cascade that could replace a theme's dedicated viewer
+  surface and produce white-on-white screens. Viewer headings now use bounded,
+  responsive typography, and the Dressing Room shell no longer clips wide
+  titles or creates horizontal overflow.
+- Fixed the Wardrobe Doors loader so both animated panels retain their intended
+  width, and made the original orbit trail follow the selected primary colour.
+- Added server-side allowlists, length limits, strict `#RRGGBB` validation, and
+  safe fallback values for every loading-screen setting, plus new browser and
+  regression coverage for the option count, loader contract, contrast, and
+  responsive bounds.
 
----
+## Updates In 1.8.0
 
-## 📦 Requirements
+- Added a browser-based administrator control room at `admin.html`. Server
+  owners can preview every theme and structural layout, pair them, and publish
+  the result without editing YAML or running an in-game command.
+- Added a protected administrator login-marker exchange. The marker becomes a
+  short-lived server-side session carried by an HttpOnly, SameSite cookie;
+  mutations also require a CSRF token and failed logins are rate limited.
+- Added an individual overlay workbench for every supported section. Admins can
+  drag in one 64x64 PNG, choose its model/gender group, and let Vanity sanitize
+  the filename, select the canonical folder, rebuild the manifest, and refresh
+  connected editors.
+- Added four materially different character-creator experiences: **Avatar
+  Studio** (editorial boutique), **Pop Catalog** (dense storefront), **Dressing
+  Room** (touch-first vertical creator), and **Pixel Wardrobe** (compact game
+  library). These use new structural layouts, not palette-only variants.
+- Added a public, read-only live-update stream. Theme/layout changes apply to
+  open editors immediately, and catalog mutations trigger an automatic manifest
+  refresh without forcing players to reopen the site.
+- Hardened the new administration surface with bounded requests, strict PNG
+  validation, collision-safe atomic writes, path containment, malformed-input
+  handling, CSP/frame protections, pack-ownership safeguards, and regression
+  coverage for authentication, importer security, live refresh, and theme
+  structure.
 
-| Requirement | Version |
-|---|---|
-| Minecraft Server | **Paper/Purpur 1.21+** |
-| Java | **21+** |
-| MineSkin API Key | Free at [mineskin.org/apikey](https://mineskin.org/apikey) |
-| SkinsRestorer | **Recommended** (for skin application) |
-| PlaceholderAPI | **Optional** (for placeholders) |
+## Updates In 1.7.1
 
----
+- Added automatic overlay-system detection for website ZIP uploads. Supported
+  assets can now be nested anywhere in a pack or identified by a flat filename.
+- Added category and model aliases for common pack conventions, including
+  singular folders, spaces, underscores, mixed casing, Steve/classic,
+  Alex/slim, gender names, and unisex assets.
+- Added automatic folder correction, including `skin_colours`, `skin-colors`,
+  and related spellings to Vanity's canonical `skin-colours` base-skin system.
+- Added collision-safe renaming for duplicate asset filenames and skips unrelated
+  preview PNGs without rejecting an otherwise valid pack.
+- Added import feedback showing corrected and skipped files, plus regression tests
+  for deeply nested, aliased, flat-file, model, and skin-colour pack layouts.
 
-## 🚀 Quick Setup
+## Updates In 1.7.0
 
-### Step 1: Install the Plugin
-1. Drop `WardrobePanel-V1.3.1.jar` into your server's `plugins/` folder
-2. Start your server once — the plugin will generate its config files and `web/` folder
-3. Stop the server
+- Added authenticated ZIP asset-pack uploads to the website **Overlay Library**.
+- Added upload/remove management with immediate catalog refresh and automatic
+  ownership grants for imported overlays.
+- Added strict upload validation: zip-slip protection, compressed/expanded size
+  limits, file-count limits, filename sanitisation, and readable 64x64 PNG checks.
+- Added saved per-outfit overlay priority. Use **Layer order** in the Creator to
+  move pants below long shirts/tunics or change any other equipped layer order.
+- Fixed `profiles.enabled: false`: the web editor now opens directly, profile
+  controls are hidden, stale profile sessions are cleared, and profile CRUD APIs
+  reject mutations while the feature is disabled.
+- Hardened static and overlay file path containment and bounded JSON request bodies.
+- Made profile and owned-item persistence operations thread-safe for concurrent
+  requests from the embedded web server.
+- Added Java archive-security tests and browser layer/profile regression tests.
 
-### Step 2: Configure `config.yml`
-Open `plugins/WardrobePanel/config.yml` and set these critical values:
+## What It Does
 
-```yaml
-web:
-  host: "0.0.0.0"           # ← ALWAYS leave this as 0.0.0.0
-  port: 50424                # ← Pick an open port
-  public-url: "http://YOUR_SERVER_IP:50424"  # ← Your real IP goes here!
-  theme: "default"           # ← Any of the 12 themes
-  layout: "classic"          # ← Any of the 6 layouts
+- Web character editor with no frontend build step
+- Login-marker-protected browser administrator panel
+- Multiple character profiles per player
+- User-uploadable overlay asset packs
+- Per-outfit overlay layer priority
+- Creator, Store, Closet, lore, and outfit application
+- Admin-selectable themes and desktop layouts
+- 68 searchable theme/layout/loading presets
+- 16 customizable loading-screen systems
+- Separate character, customisation, skin-colour, and hair-colour token pools
+- Vault economy with PlaceholderAPI + command fallback
+- Permission-based or ownership-based item access
+- Height scaling through Bukkit's player scale attribute
+- Per-server colour palette restrictions
+- Optional aging skin-tone overlays and web hooks
 
-mineskin:
-  api-key: "YOUR_MINESKIN_API_KEY"  # ← Get from mineskin.org/apikey
+## Requirements
+
+- Paper/Purpur 1.21.x; Paper 26.3 server startup checked
+- Java 21 on 1.21.x; Java 25 on 26.3
+- MineSkin API key if you want web saves to apply skins
+- Optional: Vault, PlaceholderAPI, LuckPerms
+
+## Install
+
+1. Put `Vanity.jar` in `plugins/`.
+2. Start the server once.
+3. Edit `plugins/Vanity/config.yml`.
+4. Set `web.public-url` to the public domain or IP players will open.
+5. Restart or run `/vanity reload`.
+6. Give players `vanity.use`.
+7. Run `/vanity` in-game to confirm the editor link works.
+8. Open `<web.public-url>/admin.html` and use the marker generated at
+   `admin-panel.login-marker` to enter the administrator control room.
+
+If `plugins/WardrobePanel/` exists, Vanity copies missing data from it into
+`plugins/Vanity/` on first boot. It does not delete the old folder.
+
+## Updating to 1.9.2
+
+Back up `plugins/Vanity` and any remaining `plugins/WardrobePanel` directory.
+Stop the server, replace the old JAR with `Vanity-1.9.2.jar`, and start it again.
+Keep only one Vanity/WardrobePanel JAR installed. Existing profiles, owned items,
+overlays, themes, and configuration stay in the data directory.
+
+For Paper 26.3, run Java 25. Test opening a character, applying a skin, restoring
+the original skin, and switching a profile on your staging server. Confirm that
+current and maximum health stay unchanged by a skin refresh. MineSkin needs a
+working API key, and the player-facing site should use HTTPS. Server startup
+and regression tests do not establish live MineSkin delivery or every browser
+and Minecraft client combination.
+
+## First Configuration Pass
+
+These are the settings to get right first:
+
+- `web.public-url`: required for valid clickable links
+- `mineskin.api-key`: required for applying finished looks
+- `themes.default`: active theme
+- `layout.default`: active desktop layout
+- `loading-screen.*`: loading motion, copy, colours, visibility, and scale
+- `owned-items.enabled`: whether store ownership gates creator items
+- `permissions.enabled`: whether permission nodes gate items
+- `economy.*`: Vault / placeholder economy settings
+- `scale.steps`: explicit allowed height values
+- `background.*`: site background source and dim/blur
+- `admin-panel.login-marker`: private browser administrator credential
+
+## Administrator Control Room
+
+Open:
+
+```text
+https://your-vanity-domain.example/admin.html
 ```
 
-> ⚠️ **Critical:** `host` must be `0.0.0.0`. Your public IP goes in `public-url` only!
-
-### Step 3: Install the Setup Files
-1. Unzip **`setup.zip`** — this contains the `overlays/` and `skins/` folders, this should go directly into the plugin folder.
-2. Copy the extracted `web/` folder contents into `plugins/WardrobePanel/web/` (merge with existing)
-
-### Step 4: Install the Assets
-1. Unzip **`assets.zip`** — this contains icons, backgrounds, cursors, fonts, this goes into web folder inside the plugin folder.
-2. Copy the `assets/` folder into `plugins/WardrobePanel/web/` (merge with existing `assets/`)
-
-### Step 5: Choose Your Layout
-1. Unzip **`layouts.zip`** to see all 6 layout options
-2. Copy `index.html` and `style.css` from your chosen layout folder into `plugins/WardrobePanel/web/`
-3. Or simply set `web.layout: "theater"` (or any layout name) in `config.yml`
-
-### Step 6: Open the Port
-Make sure the port you chose (e.g. `50424`) is open in your hosting firewall.
-
-### Step 7: Start & Test
-1. Start the server
-2. Run `/webchar editor` in-game — you'll receive a clickable link
-3. Open the link in your browser — the character editor should load
-
----
-
-## ⚙️ Configuration Guide
-
-### `config.yml` — Full Breakdown
-
-<details>
-<summary><b>Web Server Settings</b></summary>
+When `admin-panel.login-marker` is blank, Vanity generates a random marker on
+the first boot, writes it to `plugins/Vanity/config.yml`, and prints it once to
+the server console. Treat it like a password and serve the panel over HTTPS.
 
 ```yaml
-web:
+admin-panel:
   enabled: true
-  port: 50424
-  host: "0.0.0.0"       # ALWAYS 0.0.0.0 — binds to all interfaces
-  public-url: "http://YOUR_IP:50424"
-  theme: "default"       # See Themes section
-  layout: "classic"      # See Layouts section
+  login-marker: "replace-with-a-long-random-secret"
+  session-minutes: 60
+  max-login-attempts: 5
+  lockout-minutes: 15
+  trust-proxy-headers: false
+  bind-session-to-ip: false
+  max-overlay-size-kb: 512
 ```
 
-| Key | Description |
-|---|---|
-| `enabled` | Enable/disable the web server |
-| `port` | Port to listen on — make sure it's open in your firewall |
-| `host` | **Always `0.0.0.0`** — do NOT put your IP here |
-| `public-url` | The URL players use to access the editor. Must include `http://` |
-| `theme` | Colour theme for the website |
-| `layout` | Website layout template |
+The marker is submitted only to `/api/admin/login`; it is not placed in the URL,
+browser storage, or JavaScript after login. The returned cookie is HttpOnly,
+SameSite Strict, limited to `/api/admin`, and marked Secure when Vanity is
+published through HTTPS. Admin mutations require the session's CSRF token.
+Set `trust-proxy-headers: true` only when a trusted reverse proxy strips
+client-supplied forwarding headers; this lets login rate limits use the original
+client IP and recognizes proxy-terminated HTTPS.
 
-</details>
+From the panel an administrator can:
 
-<details>
-<summary><b>Profile Settings</b></summary>
+- choose from 68 complete creator presets;
+- preview and publish any theme/layout pairing;
+- choose one of 16 loading animations and customize its title, caption, size,
+  background, two accent colours, caption visibility, and status visibility;
+- upload one validated 64x64 PNG to any supported overlay section;
+- choose the model or gender variant while Vanity creates the canonical folder;
+- remove individually managed assets; and
+- see catalog totals and live refresh status.
+
+Assets owned by a user-uploaded ZIP pack must still be removed through **Overlay
+Library** so the pack registry and ownership grants stay consistent.
+
+## Commands
+
+```text
+/vanity
+/vanity help
+/vanity reload
+/vanity theme [list|current|set <theme>|<theme>]
+/vanity layout [list|current|set <layout>|<layout>]
+/vanity token <amount> <player> [character|cust|skin|hair]
+/vanity <player> lore
+/vanity <player> lore set <text...>
+/vanity <player> lore delete
+
+/webchar ...        legacy compatibility command
+```
+
+`theme` and `layout` are admin-only. Players can no longer switch themes from
+the website.
+
+## Permissions
+
+```text
+vanity.use
+vanity.admin
+vanity.lore.others
+vanity.bypass
+vanity.skin.<skin-id>
+vanity.skin.*
+vanity.overlay.<category>.<overlay-id>
+vanity.overlay.<category>.*
+vanity.overlay.*
+vanity.overlay.upload
+vanity.*
+```
+
+Legacy `webchar.*` and `wardrobepanel.*` checks still exist for older servers.
+
+## Folder Layout
+
+```text
+plugins/Vanity/
+  config.yml
+  messages.yml
+  palettes.yml
+  shop.yml
+  heights.yml
+  overlays/
+    hairs/
+    eyes/
+    eyebrows/
+    beards/
+    shirts/
+    jackets/
+    pants/
+    shoes/
+    accessories/
+    hats/
+    markings/
+  skins/
+  skin-tones/
+  playerdata/
+  profiles/
+  overlay-packs.json
+  web/
+```
+
+`plugins/Vanity/web/` is the live website. Edit that folder on the server if
+you want to customise HTML, CSS, JS, assets, or bundled themes.
+
+## Themes
+
+Bundled themes:
+
+```text
+avatar-studio
+pop-catalog
+dressing-room
+pixel-wardrobe
+modern-dark
+modern-light
+mmorpg
+medieval
+fantasy
+sci-fi
+obsidian
+executive
+ember
+neon-noir
+nordic
+royal
+terminal
+```
+
+Each bundled theme has its own:
+
+- `themes/<theme>.css`
+- `assets/bg/<theme>/bg.png`
+- `assets/cursor/<theme>/default.png`
+- `assets/cursor/<theme>/active.png`
+- `assets/cursor/<theme>/drag.png`
+- icon pack / font mapping in `web/js/lib/themeAssets.js`
+
+Change the active theme:
+
+```text
+/vanity theme list
+/vanity theme current
+/vanity theme sci-fi
+```
+
+Or edit `config.yml`:
+
+```yaml
+themes:
+  default: sci-fi
+  allow-player-switch: false
+```
+
+## Layouts
+
+Bundled admin-selectable desktop layouts:
+
+```text
+boutique
+marketplace
+dressing-room
+pixel-wardrobe
+command
+showcase
+atelier
+split
+compact
+catalog
+```
+
+Change the active layout:
+
+```text
+/vanity layout list
+/vanity layout current
+/vanity layout showcase
+```
+
+Or edit `config.yml`:
+
+```yaml
+layout:
+  default: showcase
+```
+
+## Loading Screen
+
+The protected administrator panel includes a live loading-screen studio. Its
+preview is private until **Publish loader** is pressed; publication persists the
+choice and updates already-open editors in real time.
+
+The same settings can be managed in `config.yml`:
+
+```yaml
+loading-screen:
+  style: orbit
+  title: "VANITY"
+  caption: "Character creator"
+  accent: "#65a7ff"
+  secondary: "#ff66b8"
+  background: "#000000"
+  show-caption: true
+  show-status: true
+  size: standard       # compact | standard | large
+```
+
+Available styles are `orbit`, `dual-orbit`, `progress`, `blocks`, `pulse`,
+`scanner`, `wardrobe`, `mannequin`, `pixel-rain`, `constellation`, `rune`,
+`stitch`, `carousel`, `portal`, `wave`, and `logo`.
+
+## Backgrounds
+
+Global background config lives in `config.yml`:
+
+```yaml
+background:
+  type: room3d   # static | gif | video | room3d
+  source: ""     # path under web/assets/ when using static/gif/video
+  blur: 0
+  dim: 0.3
+```
+
+Theme-specific background images live under:
+
+```text
+plugins/Vanity/web/assets/bg/<theme>/bg.png
+```
+
+Swap those files when you want different per-theme stage art.
+
+## Viewer Lighting
+
+Main preview lighting is server-configured:
+
+```yaml
+viewer-lighting:
+  enabled: true
+  mode: studio     # studio | uniform
+  intensity: 1.0
+  azimuth: 35.0
+  elevation: 55.0
+  ambient: 0.58
+  exposure: 1.48
+```
+
+- `studio` keeps directional lighting
+- `uniform` flattens the light for cleaner colour checking
+
+The website lighting button edits the preview values for that session. The
+configured defaults still come from `config.yml`.
+
+## Categories And Tabs
+
+The creator tab order is driven by `config.yml`:
+
+```yaml
+categories:
+  order:
+    - base
+    - eyes
+    - eyebrows
+    - hairs
+    - beards
+    - shirts
+    - jackets
+    - pants
+    - shoes
+    - accessories
+    - hats
+    - markings
+```
+
+Labels are also configurable there.
+
+## Adding Base Skins
+
+Base skins live in:
+
+```text
+plugins/Vanity/skins/
+```
+
+Typical ids follow the shipped model/gender variants:
+
+- `base-steve-male`
+- `base-alex-male`
+- `base-alex-female`
+
+If you add or remove base skins, run:
+
+```text
+/vanity reload
+```
+
+## Adding Overlays
+
+Overlay PNGs live in:
+
+```text
+plugins/Vanity/overlays/<category>/
+```
+
+Supported categories:
+
+```text
+hairs
+eyes
+eyebrows
+beards
+shirts
+jackets
+pants
+shoes
+accessories
+hats
+markings
+```
+
+Naming matters because Vanity filters by gender/model:
+
+- `hairs`, `eyes`, `eyebrows`, `pants`, `shoes`, `hats`, `markings`
+  - use `male-...`, `female-...`, or `any-...`
+- `beards`
+  - use `male-...` or `any-...`
+- `shirts`, `jackets`, `accessories`
+  - use `steve-male-...`, `alex-male-...`, `female-...`, or `any-...`
+
+Examples:
+
+```text
+plugins/Vanity/overlays/hairs/male-curly.png
+plugins/Vanity/overlays/eyebrows/any-clean_brows.png
+plugins/Vanity/overlays/shirts/steve-male-basic_tee.png
+plugins/Vanity/overlays/jackets/female-cropped_jacket.png
+```
+
+After changing overlays, run `/vanity reload` so Vanity rescans and regenerates
+`web/assets/manifest.json`.
+
+Alternatively, use `admin.html` to install individual overlays. Panel uploads
+are scanned and pushed to open editors automatically, so no manual reload is
+needed.
+
+## Website Overlay Library
+
+Authenticated players can open **Overlay Library** in the editor sidebar and
+upload a ZIP from their computer. Vanity searches the whole archive, so supported
+PNGs can be inside any number of wrapper folders. It recognizes category/model
+folders and can also infer both from flat filenames.
+
+```text
+anything/.../<category>/.../<variant>/.../<file>.png
+anything/.../<category>_<variant>_<file>.png
+```
+
+Examples:
+
+```text
+overlays/shirts/alex-male/linen_tunic.png
+exports/Shirt/Alex_Male/linen_tunic.png
+download/pants_unisex_travel_belt.png
+assets/skin_colours/Alex Female/warm.png
+```
+
+Folder spelling is normalized automatically. Spaces, underscores, hyphens,
+singular/plural names, and mixed casing are accepted. Common aliases include
+`top` -> `shirts`, `trousers` -> `pants`, `slim` -> `alex-male`, `classic` ->
+`steve-male`, `unisex` -> `any`, and `skin_colours` -> `skin-colours`. Uploaded
+skin-colour assets are installed as base skins in `plugins/Vanity/skins/`.
+
+Every PNG must be exactly 64x64. Supported variants are:
+
+- Gender categories: `male`, `female`, `any`
+- Model categories (`shirts`, `jackets`, `accessories`): `steve-male`,
+  `alex-male`, `female`, `any`
+- Beards: `male`, `any`
+
+Upload policy and safety limits are configured in `config.yml`:
+
+```yaml
+overlay-library:
+  uploads:
+    enabled: true
+    admin-only: false
+    require-permission: false
+    max-pack-size-mb: 5
+    max-expanded-size-mb: 10
+    max-file-size-kb: 512
+    max-files-per-pack: 100
+    max-packs-per-user: 20
+```
+
+When `require-permission` is enabled, players need
+`vanity.overlay.upload`. Uploaded filenames are namespaced by uploader and pack,
+the uploader receives ownership of every imported item, and pack metadata is
+stored in `plugins/Vanity/overlay-packs.json`.
+
+## Overlay Layer Priority
+
+Open any Creator category and select **Layer order**. Equipped overlays are shown
+from bottom to top. Moving a layer higher draws it later and places it in front.
+The order is stored with the active outfit and with saved Closet outfits.
+
+For a long tunic, move `pants` lower than `shirts` so the shirt is composited in
+front of the pants. Existing outfits without a saved order keep the legacy
+default automatically.
+
+## Disabling Profiles
 
 ```yaml
 profiles:
-  enabled: true
-  max-per-player: 5
+  enabled: false
 ```
 
-</details>
+With profiles disabled, `/vanity` opens the single-player outfit directly. The
+character picker, New Character action, lore/profile controls, and character
+token display are removed from the web flow. The server also blocks profile
+create, delete, rename, and select API calls, including calls made from an older
+open browser session.
 
-<details>
-<summary><b>Feature Toggles</b></summary>
+## Shop And Ownership
 
-```yaml
-features:
-  skin-change: true
-  skin-colour: true
-  eye-colour: true
-  eye-style: true
-  hair-colour: true
-  hair-style: true
-  beard-style: true
-```
+`shop.yml` controls store pricing. `owned-items` in `config.yml` controls
+whether creator access depends on ownership.
 
-Disable any feature to hide it from the web editor.
-
-</details>
-
-<details>
-<summary><b>Skin Application</b></summary>
-
-```yaml
-skin-apply:
-  auto-apply: true       # Apply skin when player saves in wardrobe
-  apply-on-join: true    # Apply saved skin on player join
-  apply-message: "&aYour custom skin has been applied!"
-  apply-failed: "&cFailed to apply skin. Please try again later."
-```
-
-</details>
-
-<details>
-<summary><b>Session & Cooldown</b></summary>
-
-```yaml
-session:
-  expiry-minutes: 1440   # 24 hours
-  max-per-player: 1
-
-cooldown:
-  enabled: true
-  seconds: 30
-```
-
-</details>
-
-<details>
-<summary><b>Messages</b></summary>
-
-All messages support `&` colour codes:
-
-```yaml
-messages:
-  prefix: "&8[&6WebChar&8] "
-  link-message: "&aClick here to open your character editor: &n%link%"
-  link-hover: "&7Click to open the character creator"
-  session-created: "&aYour character editor link has been created!"
-  session-expired: "&cYour session has expired. Use /webchar editor for a new link."
-  no-permission: "&cYou don't have permission to do that."
-  reload-success: "&aConfiguration reloaded! Overlays rescanned."
-  server-not-running: "&cThe web server is not running. Contact an administrator."
-  cooldown-message: "&cPlease wait %time% before requesting a new link."
-```
-
-</details>
-
----
-
-## 💬 Commands
-
-| Command | Description | Permission |
-|---|---|---|
-| `/webchar` | Open editor for default profile | `webchar.use` |
-| `/webchar editor [profile]` | Open editor for a specific profile | `webchar.use` |
-| `/webchar create <name>` | Create a new character profile | `webchar.use` |
-| `/webchar delete <name>` | Delete a character profile | `webchar.use` |
-| `/webchar list` | List all your profiles | `webchar.use` |
-| `/webchar load <profile>` | Load/apply a profile's skin in-game | `webchar.use` |
-| `/webchar apply <profile>` | Alias for `load` | `webchar.use` |
-| `/webchar rename <old> <new>` | Rename a profile | `webchar.use` |
-| `/webchar copy <source> <new>` | Duplicate a profile | `webchar.use` |
-| `/webchar setskin <profile>` | Set a profile as your active skin | `webchar.use` |
-| `/webchar resetskin` | Reset to your original Minecraft skin | `webchar.use` |
-| `/webchar loadfor <player> <profile>` | Apply another player's profile to them | `webchar.admin` |
-| `/webchar link <player> [profile]` | Generate editor link for another player | `webchar.link.others` |
-| `/webchar give <player> <type> <id>` | Give an owned item to a player | `webchar.admin` |
-| `/webchar revoke <player> <type> <id>` | Revoke an owned item | `webchar.admin` |
-| `/webchar reload` | Reload config and rescan overlays | `webchar.reload` |
-| `/webchar status` | Show plugin & web server status | `webchar.admin` |
-| `/webchar sessions` | List all active sessions | `webchar.admin` |
-| `/webchar help` | Show command help | `webchar.use` |
-
-**Aliases:** `/wc`, `/character`
-
----
-
-## 🔑 Permissions
-
-| Permission | Description | Default |
-|---|---|---|
-| `webchar.use` | Use the character editor and basic commands | `true` |
-| `webchar.admin` | Admin commands: loadfor, give, revoke, status, sessions | `op` |
-| `webchar.reload` | Reload plugin configuration | `op` |
-| `webchar.link.others` | Generate editor links for other players | `op` |
-| `wardrobepanel.bypass` | Bypass all permission filtering (see all items) | — |
-| `wardrobepanel.skin.<id>` | Access a specific base skin | — |
-| `wardrobepanel.overlay.<category>.<id>` | Access a specific overlay | — |
-| `wardrobepanel.overlay.<category>.*` | Access all overlays in a category | — |
-| `wardrobepanel.overlay.*` | Access all overlays | — |
-
----
-
-## 📊 PlaceholderAPI
-
-> Requires [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/)
-
-All placeholders use the prefix `%wardrobepanel_<placeholder>%`
-
-### Profile Placeholders
-
-| Placeholder | Description |
-|---|---|
-| `%wardrobepanel_profile_count%` | Number of profiles the player has |
-| `%wardrobepanel_profile_current%` | Currently active profile name |
-| `%wardrobepanel_profile_list%` | Comma-separated list of all profile names |
-| `%wardrobepanel_profile_max%` | Maximum profiles allowed (from config) |
-| `%wardrobepanel_profile_name_0%` | Profile name by index (0, 1, 2...) |
-| `%wardrobepanel_last_profile%` | Last used profile name |
-
-### Outfit Placeholders
-
-| Placeholder | Description |
-|---|---|
-| `%wardrobepanel_outfit_skin%` | Current base skin ID |
-| `%wardrobepanel_outfit_skin_color%` | Current skin palette |
-| `%wardrobepanel_outfit_hair%` | Current hairstyle overlay ID |
-| `%wardrobepanel_outfit_hair_color%` | Current hair colour palette |
-| `%wardrobepanel_outfit_eye%` | Current eye overlay ID |
-| `%wardrobepanel_outfit_eye_color%` | Current eye colour palette |
-| `%wardrobepanel_outfit_shirt%` | Current shirt overlay ID |
-| `%wardrobepanel_outfit_pants%` | Current pants overlay ID |
-| `%wardrobepanel_outfit_shoes%` | Current shoes overlay ID |
-| `%wardrobepanel_outfit_jacket%` | Current jacket overlay ID |
-| `%wardrobepanel_outfit_accessory%` | Current accessory overlay ID |
-| `%wardrobepanel_outfit_beard%` | Current beard overlay ID |
-| `%wardrobepanel_outfit_marking%` | Current marking overlay ID |
-
-### Web & Session Placeholders
-
-| Placeholder | Description |
-|---|---|
-| `%wardrobepanel_web_url%` | Public URL of the web editor |
-| `%wardrobepanel_skin_url%` | URL to the player's saved skin image |
-| `%wardrobepanel_theme%` | Current theme name |
-| `%wardrobepanel_session_active%` | `true`/`false` if player has active session |
-| `%wardrobepanel_session_expires%` | Minutes until session expires |
-| `%wardrobepanel_cooldown_remaining%` | Seconds left on link cooldown |
-
-### Ownership & Stats Placeholders
-
-| Placeholder | Description |
-|---|---|
-| `%wardrobepanel_owned_count%` | Total number of owned items |
-| `%wardrobepanel_owned_<category>%` | Number of owned items in a category |
-| `%wardrobepanel_owns_all%` | `true`/`false` if player owns everything |
-| `%wardrobepanel_total_skins_applied%` | Total skin applications by this player |
-| `%wardrobepanel_last_skin_change%` | Timestamp of last skin change |
-
----
-
-## 📐 Website Layouts
-
-WardrobePanel ships with **6 different website layouts**. Switch between them easily.
-
-| Layout | Description |
-|---|---|
-| **`classic`** ⭐ | 3-column: Left sidebar \| Center viewer \| Right panel |
-| **`centered`** | Full-screen viewer with floating glassmorphism panels |
-| **`compact`** | Slim top bar + two-column (Viewer \| Panel) |
-| **`stacked`** | Thin sidebar + vertical split (viewer top, panel bottom) |
-| **`theater`** | Full-screen viewer with slide-out drawer panels |
-| **`minimal`** | Full viewer + bottom bar + slide-out customiser |
-
-### Switching Layouts
-
-**Method 1 — Via config.yml (recommended):**
-```yaml
-web:
-  layout: "theater"    # classic, centered, compact, stacked, theater, minimal
-```
-Then `/webchar reload`
-
-**Method 2 — Manual copy:**
-1. Navigate to `plugins/WardrobePanel/web/layouts/`
-2. Open your chosen layout folder (e.g. `layout-theater/`)
-3. Copy `index.html` and `style.css` into `plugins/WardrobePanel/web/` (overwrite existing)
-4. Set `layout: "custom"` in config.yml to prevent overwrite on reload
-5. Run `/webchar reload`
-
-**Method 3 — Linux command:**
-```bash
-cp plugins/WardrobePanel/web/layouts/layout-theater/index.html plugins/WardrobePanel/web/index.html
-cp plugins/WardrobePanel/web/layouts/layout-theater/style.css plugins/WardrobePanel/web/style.css
-```
-
----
-
-## 🎨 Themes
-
-Set your theme in `config.yml`:
-
-```yaml
-web:
-  theme: "midnight"
-```
-
-| Theme | Description |
-|---|---|
-| `default` | Dark charcoal with teal accents |
-| `midnight` | Deep navy blue |
-| `ocean` | Ocean blue tones |
-| `forest` | Dark green woodland |
-| `sunset` | Warm amber and orange |
-| `cherry` | Deep magenta / cherry blossom |
-| `nether` | Fiery red and dark crimson |
-| `end` | Purple and dark void |
-| `royal` | Deep purple and gold |
-| `steampunk` | Bronze and copper tones |
-| `pastel` | Soft pastel colours |
-| `arctic` | Icy blue and white |
-
-Themes are applied globally — all 6 layouts support all 12 themes.
-
----
-
-## 🖼️ Customising Website Assets
-
-You can swap out the visual assets without touching any code.
-
-Navigate to `plugins/WardrobePanel/web/assets/` and replace these files:
-
-| Path | What it is | Size to keep |
-|---|---|---|
-| `bg/bg.png` | Background image for the editor | Any resolution |
-| `cursor/mouse.png` | Default cursor | 32×32 or similar |
-| `cursor/mouse_click.png` | Cursor when clicking | 32×32 |
-| `cursor/mousedraghover.png` | Cursor when hovering the 3D viewer | 32×32 |
-| `cursor/mouse_drag.png` | Cursor when dragging the 3D viewer | 32×32 |
-| `font/minecraft.woff2` | The font used throughout the UI | `.woff2` format |
-| `icons/*.png` | Category icons in the panel (eyes.png, hairs.png, shirts.png, etc.) | 64×64 recommended |
-
-> **Keep the same filenames and sizes** — just replace the PNGs.
-
-After replacing, `/webchar reload` or restart the server.
-
----
-
-## 👕 Adding / Changing Overlays & Skins
-
-### Folder Structure
-
-```
-web/assets/
-├── overlays/
-│   ├── accessories/     ← Accessory overlays
-│   ├── beards/          ← Beard overlays
-│   ├── eyes/            ← Eye overlays
-│   ├── hairs/           ← Hair overlays
-│   ├── jackets/         ← Jacket overlays
-│   ├── markings/        ← Marking overlays
-│   ├── pants/           ← Pants overlays
-│   ├── shirts/          ← Shirt overlays
-│   ├── shoes/           ← Shoe overlays
-│   └── skin-colours/    ← Base skin PNG files
-├── skins/               ← Base skin files (used for preview rendering)
-├── manifest.json        ← Auto-generated index of all overlays
-└── catalog.json         ← Category definitions, palettes, colours
-```
-
-### Adding New Overlays
-
-1. Create your overlay as a **64×64 PNG** (standard Minecraft skin format)
-2. Only draw on the 2nd layer (overlay layer) of the skin template
-3. Drop the PNG file into the appropriate category folder (e.g. `overlays/hairs/`)
-4. Run `/webchar reload` in-game — the manifest is regenerated automatically
-5. The new overlay will appear in the editor immediately
-
-### Changing Base Skins
-
-1. Replace or add PNGs in `overlays/skin-colours/`
-2. Keep the naming convention: `base-steve-male.png`, `base-alex-female.png`, etc.
-3. Run `/webchar reload`
-
-> ⚠️ **Important:** When the plugin reloads or starts, it auto-scans all overlay folders and regenerates `manifest.json`. You never need to edit manifest.json manually.
-
----
-
-## 👤 Profiles & Saved Outfits
-
-### Profiles
-
-Each player can have multiple character profiles (like RPG character slots):
-
-- **Create:** `/webchar create MyWarrior`
-- **List:** `/webchar list`
-- **Edit:** `/webchar editor MyWarrior` — opens the web editor for that profile
-- **Load/Apply:** `/webchar load MyWarrior` — applies that profile's skin in-game
-- **Rename:** `/webchar rename MyWarrior MyKnight`
-- **Copy:** `/webchar copy MyWarrior MyBackup`
-- **Delete:** `/webchar delete MyWarrior`
-
-### Saved Outfits
-
-Within each profile, players can save multiple named outfits in the web editor:
-
-1. Customise your character in the editor
-2. Click the **+** button in the sidebar
-3. Enter a name for the outfit
-4. The outfit appears in the sidebar — click to load it anytime
-5. Hover and click **✕** to delete
-
----
-
-## 🛒 Owned Items System
-
-Enable a shop-like system where players must "own" items before they can use them:
+Example ownership setup:
 
 ```yaml
 owned-items:
   enabled: true
   starter-categories:
-    - "eyes"               # Everyone gets all eyes for free
-  starter-overlays: []     # Specific free overlays: ["hairs/short_hair"]
-  combine-with-permissions: true
+    - eyes
+    - eyebrows
+    - hairs
+    - beards
+    - base
+  store-categories:
+    - shirts
+    - pants
+    - jackets
+    - shoes
+    - accessories
+    - hats
 ```
 
-### Admin Commands
-
-```
-/webchar give <player> all                    — Give all items
-/webchar give <player> category <name>        — Give all items in a category
-/webchar give <player> overlay <category/id>  — Give a specific overlay
-
-/webchar revoke <player> all                  — Revoke all items
-/webchar revoke <player> category <name>      — Revoke items in a category
-/webchar revoke <player> overlay <category/id>— Revoke a specific overlay
-```
-
----
-
-## 🔐 Permission-Based Filtering
-
-Control which items players can see in the editor:
+Example shop defaults:
 
 ```yaml
-permissions:
-  enabled: true
-  default-allowed: true    # true = see everything unless denied
-  bypass-permission: "wardrobepanel.bypass"
+pricing:
+  defaults:
+    hairs: 0
+    eyebrows: 0
+    beards: 0
+    eyes: 0
+    shirts: 200
+    jackets: 350
 ```
 
-### Permission Nodes
+Vanity can auto-generate `shop.yml` entries from discovered overlays without
+overwriting existing manual edits.
 
-| Pattern | Example | Description |
-|---|---|---|
-| `wardrobepanel.skin.<id>` | `wardrobepanel.skin.base-steve-male` | Access to a specific base skin |
-| `wardrobepanel.overlay.<cat>.<id>` | `wardrobepanel.overlay.hairs.male-90s_Side_Part` | Access to a specific overlay |
-| `wardrobepanel.overlay.<cat>.*` | `wardrobepanel.overlay.hairs.*` | Access to all overlays in a category |
-| `wardrobepanel.overlay.*` | — | Access to all overlays |
-| `wardrobepanel.bypass` | — | See all items (bypass filtering) |
+## Economy
 
----
+Vault is preferred. PlaceholderAPI + console commands are the fallback.
 
-## 🔧 Troubleshooting
+```yaml
+economy:
+  use-vault: true
+  use-placeholder: true
+  currency-name: Coins
+  placeholder: "%vault_eco_balance%"
+  withdraw-command: "eco take {player} {amount}"
+  deposit-command: "eco give {player} {amount}"
+```
 
-### "ERR_CONNECTION_REFUSED" / Site can't be reached
+## Tokens
 
-1. ✅ Make sure `host` is `"0.0.0.0"` in config.yml — NOT your IP
-2. ✅ Make sure the port is open in your hosting firewall
-3. ✅ Make sure `public-url` has `http://` prefix
-4. ✅ Check the console — look for `Web server started on 0.0.0.0:PORT`
+There are four separate token pools:
 
-### "BindException: Cannot assign requested address"
+- `character`: extra profile creation slots
+- `cust`: general customisation changes like eye colour or height
+- `skin`: skin-colour changes
+- `hair`: hair/beard/eyebrow colour changes
 
-You put your server IP in the `host` field. Change it to `"0.0.0.0"`.
+Admin grant examples:
 
-### Skin not applying in-game
+```text
+/vanity token 1 PlayerName character
+/vanity token 5 PlayerName cust
+/vanity token 2 PlayerName skin
+/vanity token 2 PlayerName hair
+```
 
-1. ✅ Check your MineSkin API key is valid
-2. ✅ Make sure SkinsRestorer is installed
-3. ✅ Try `/webchar load <profile>` manually
-4. ✅ Check console for MineSkin API errors
+Config:
 
-### Web editor loads but shows "Session invalid"
+```yaml
+customisation-tokens:
+  enabled: true
+  free-per-profile: 1
 
-1. ✅ Make sure `public-url` matches the URL you're visiting
-2. ✅ Use a fresh link from `/webchar editor`
-3. ✅ Sessions expire after the configured time (default: 24h)
+character-tokens:
+  enabled: true
+  free-slots: 1
+```
 
-### Overlays not showing after adding new files
+## Colour Palettes
 
-1. ✅ Run `/webchar reload` to regenerate the manifest
-2. ✅ Make sure overlays are 64×64 PNG files
-3. ✅ Check the overlay is in the correct category folder
+Restrict colours in `palettes.yml`. Vanity enforces these rules in both the web
+UI and the server API.
 
----
+Categories include:
 
-## 💬 Support
+- `skin`
+- `hair`
+- `eyes`
+- `shirts`
+- `pants`
+- `jackets`
+- `shoes`
+- `accessories`
+- `hats`
 
-- **Discord:** [https://discord.gg/SG8jvb9WU5](https://discord.gg/SG8jvb9WU5)
-- **GitHub Wiki:** [https://github.com/Anonventions/WardrobePanel-Wiki-V2](https://github.com/Anonventions/WardrobePanel-Wiki-V2)
-- **Issues:** Report bugs on the Discord or GitHub
+Example:
 
----
+```yaml
+categories:
+  skin:
+    allowed-hex:
+      - "#f5d5b8"
+      - "#d4a373"
+    allowed-hue-range: [0, 50]
+    allowed-saturation-range: [10, 70]
+    allowed-lightness-range: [15, 90]
+```
 
-<p align="center">
-  <b>Made by Anonventions</b><br>
-  <sub>© 2025-2026 Anonventions. All rights reserved.</sub>
-</p>
+## Scales / Heights
+
+Preferred setup is explicit values in `config.yml`:
+
+```yaml
+scale:
+  steps: [0.85, 0.90, 0.95, 1.00, 1.05, 1.10, 1.15, 1.20]
+```
+
+The website slider snaps to these values, and the server snaps incoming changes
+again before applying the player scale attribute in-game.
+
+## Aging System
+
+The system is scaffolded and disabled by default.
+
+Enable it:
+
+```yaml
+aging:
+  enabled: true
+  tone-folder: skin-tones
+  tick-interval-minutes: 60
+  age-options: [child, teen, adult, elder]
+  hair-grey-at-age: elder
+```
+
+Then place tone overlays in:
+
+```text
+plugins/Vanity/skin-tones/
+```
+
+File format:
+
+```text
+<tone>_age<NN>.png
+```
+
+Examples:
+
+```text
+fair_age15.png
+fair_age25.png
+fair_age40.png
+```
+
+## Profile Switch Behaviour
+
+These settings control what changes when a player switches profile in the web
+UI:
+
+```yaml
+profile-switch:
+  inventory: true
+  height: true
+  permissions: false
+  clear-potion-effects: false
+  reset-hunger: false
+  reset-health: false
+```
+
+If `permissions: true`, Vanity expects LuckPerms when applying profile group
+changes.
+
+## Lore
+
+Players can write lore per profile in the website. In-game:
+
+```text
+/vanity <player> lore
+/vanity <player> lore set <text...>
+/vanity <player> lore delete
+```
+
+## Web Hooks
+
+Vanity can run console commands from website events:
+
+- `outfit-apply`
+- `outfit-save`
+- `profile-create`
+- `profile-select`
+- `profile-delete`
+- `item-purchase`
+- `lore-set`
+
+Config:
+
+```yaml
+web-hooks:
+  enabled: true
+  events:
+    outfit-apply: []
+    outfit-save: []
+    profile-create: []
+    profile-select: []
+    profile-delete: []
+    item-purchase: []
+    lore-set: []
+```
+
+## Editing The Website
+
+Live website files extract to:
+
+```text
+plugins/Vanity/web/
+```
+
+Most useful files:
+
+- `index.html`: shell markup
+- `admin.html`, `admin.css`, `admin.js`: administrator control room
+- `style.css`: shared layout and common component styling
+- `themes/*.css`: per-theme visuals
+- `js/icons.js`: icon packs
+- `js/lib/themeAssets.js`: theme -> bg/cursor/icon/font binding
+- `js/render/viewer3d.js`: player viewer and lighting
+- `js/render/itemPreview.js`: store/closet card render framing
+- `js/ui/*.js`: editor, store, closet, settings, and profile UI
+
+There is no web build pipeline. Edit the extracted files directly, refresh the
+page, and test.
+
+## Saved Outfits / Closet
+
+Players can:
+
+- save outfits
+- equip outfits
+- rename outfits
+- delete outfits
+- edit a saved preset by loading it into the creator and saving back over it
+
+The edit flow now works from Closet into Creator instead of editing inside the
+modal.
+
+## Developer Build
+
+```powershell
+C:\Users\caner\.codex\tools\apache-maven-3.9.9\bin\mvn.cmd clean package
+node --test src\test\web\catalog.test.mjs
+```
+
+Output jar:
+
+```text
+target/Vanity.jar
+```
