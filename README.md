@@ -170,6 +170,12 @@ working API key, and the player-facing site should use HTTPS. Server startup
 and regression tests do not establish live MineSkin delivery or every browser
 and Minecraft client combination.
 
+## Installing the included skins and overlays
+
+The server ZIP includes the original customer `overlays/` and `skins/` folders. The JAR itself supplies three base skins and editor artwork (75 default assets). For a fresh installation, let Vanity create its data folder, stop the server, then copy the included folders into `plugins/Vanity/` using **Skip / Do not replace** for existing files. Copy only missing files; never replace custom overlays, skins, profiles or configuration. Existing installations do not need to copy the defaults again unless you want missing defaults restored. Start the server or run `/vanity reload` after copying.
+
+Use folder copy for this preserved pack: eleven original hair images use the classic 64x32 format, while the browser importer requires 64x64 PNGs. The asset bytes are unchanged from the previous customer archive.
+
 ## First Configuration Pass
 
 These are the settings to get right first:
